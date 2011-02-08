@@ -229,7 +229,9 @@ forward are related to this variable.")
 (defun anything-etags+-get-tag-table-buffer (tag-file)
   "Get tag table buffer for a tag file."
   (when (file-exists-p tag-file)
-    (let ((tag-table-buffer) (current-buf (current-buffer)))
+    (let ((tag-table-buffer) (current-buf (current-buffer))
+          (tags-revert-without-query t)
+          (large-file-warning-threshold nil))
       (if anything-etags+-use-xemacs-etags-p
           (setq tag-table-buffer (get-tag-table-buffer tag-file))
         (visit-tags-table-buffer tag-file)
