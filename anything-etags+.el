@@ -607,7 +607,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
         (header-name .( (lambda (name) (concat name "`RET': Go ,`C-z' Preview. `C-e': Clear all history."))))
         (init .  anything-etags+-history-init)
         (candidates . anything-etags+-history-candidates)
-        (volatile)
+;;        (volatile) ;;maybe needn't
         (action . (("Go" . anything-etags+-history-action-go)
                    ("Clear all history" . anything-etags+-history-clear-all)))))
 
