@@ -159,6 +159,39 @@
  search '(DISPLAY . REAL)' in anything.el for more info."
   :type 'boolean
   :group 'anything-etags+)
+        
+(defcustom anything-etags+-highlight-tag-after-jump t
+  "*If non-nil, temporarily highlight the tag
+  after you jump to it.
+  (borrowed from etags-select.el)"
+  :group 'etags-select-mode
+  :type 'boolean)
+(defcustom anything-etags+-highlight-delay 1.0
+  "*How long to highlight the tag.
+  (borrowed from etags-select.el)"
+  :group 'anything-etags+-
+  :type 'number)
+
+(defface anything-etags+-highlight-tag-face
+  '((t (:foreground "white" :background "cadetblue4" :bold t)))
+  "Font Lock mode face used to highlight tags.
+  (borrowed from etags-select.el)"
+  :group 'anything-etags+-)
+        
+(defun anything-etags+-highlight (beg end)
+  "Highlight a region temporarily.
+   (borrowed from etags-select.el)"
+  (if (featurep 'xemacs)
+      (let ((extent (make-extent beg end)))
+        (set-extent-property extent 'face 'anything-etags+-highlight-tag-face)
+        (sit-for anything-etags+-highlight-delay)
+        (delete-extent extent))
+    (let ((ov (make-overlay beg end)))
+      (overlay-put ov 'face 'anything-etags+-highlight-tag-face)
+      (sit-for anything-etags+-highlight-delay)
+      (delete-overlay ov))))
+
+
 
 ;; (defcustom anything-etags+-disable-history-manager nil
 ;;   "don't use anything-etags+.el to manager `find-tag-marker-ring'.
@@ -198,7 +231,20 @@ forward are related to this variable.")
 (defvar anything-etags+-use-xemacs-etags-p
   (fboundp 'get-tag-table-buffer)
   "Use XEmacs etags?")
+                      
+(defvar anything-etags+-previous-matched-pattern nil
+  "work with `anything-etags+-candidates-cache'.
+  the value is (car (amp-mp-make-regexps anything-pattern))
+:the first part of `anything-pattern', the matched
+ candidates is saved in `anything-etags+-candidates-cache'. when current
+'(car (amp-mp-make-regexps anything-pattern))' is equals to this value
+then the cached candidates can be reused ,needn't find from the tag file.")
 
+(defvar anything-etags+-candidates-cache nil
+  "documents see `anything-etags+-previous-matched-pattern'")
+(defvar anything-etags+-untransformed-anything-pattern
+  "this variable is seted in func of transformed-pattern .and is used when
+getting candidates.")
 ;;; Functions
 (defun anything-etags+-match-string (num &optional string))
 
@@ -243,27 +289,41 @@ forward are related to this variable.")
   "Get tag table buffer for a tag file."
   (delete nil (mapcar 'anything-etags+-get-tag-table-buffer
                       (anything-etags+-get-tag-files))))
-
-(defun anything-etags+-get-candidates()
-  (let ((tag-files (anything-etags+-get-tag-files))
-        (pattern anything-pattern);;default use whole anything-pattern to search in tag files 
-        candidates)
+(defun anything-etags+-get-candidates-with-cache-support()
+  "for example when the `anything-pattern' is 'toString System pub'
+   only 'toString' is treated as tagname,and
+`anything-etags+-get-candidates-from-all-tag-file'
+will search `toString' in all tag files. and the found
+ candidates is stored in `anything-etags+-candidates-cache'
+'toString' is stored in `anything-etags+-previous-matched-pattern'
+so when the `anything-pattern' become to 'toString System public'
+needn't search tag file again."
+  (let ((pattern anything-etags+-untransformed-anything-pattern));;default use whole anything-pattern to search in tag files 
     ;; first collect candidates using first part of anything-pattern
     (when (featurep 'anything-match-plugin)
       ;;for example  (amp-mp-make-regexps "boo far") -->("boo" "far")
-      (setq pattern (car (amp-mp-make-regexps anything-pattern))))
+      (setq pattern (car (amp-mp-make-regexps anything-etags+-untransformed-anything-pattern))))
+    (unless (string-equal anything-etags+-previous-matched-pattern pattern)
+;;          (setq candidates anything-etags+-candidates-cache)
+        (setq anything-etags+-candidates-cache (anything-etags+-get-candidates-from-all-tag-file pattern))
+        (setq anything-etags+-previous-matched-pattern pattern))
+    anything-etags+-candidates-cache))
+
+(defun anything-etags+-get-candidates-from-all-tag-file(first-part-of-anything-pattern)
+  (let (candidates)
     (dolist (tag-table-buffer (anything-etags+-get-available-tag-table-buffers))
-      (setq candidates
-            (append
-             candidates
-             (anything-etags+-get-candidates-from-tag-file pattern tag-table-buffer))))
+    (setq candidates
+          (append
+           candidates
+           (anything-etags+-get-candidates-from-tag-file
+            first-part-of-anything-pattern tag-table-buffer))))
     candidates))
 
 (defun anything-etags+-get-candidates-from-tag-file (tagname tag-table-buffer)
   "find tagname in tag-table-buffer. "
   (catch 'failed
     (let ((case-fold-search (anything-etags+-case-fold-search))
-          tag-info tag-line src-file-name
+          tag-info tag-line src-file-name full-tagname
           tag-regex candidates)
       (if (string-match "\\\\_<\\|\\\\_>" tagname)
           (progn
@@ -282,6 +342,7 @@ forward are related to this variable.")
         (while (search-forward  tagname nil t) ;;take care this is not re-search-forward ,speed it up
           (beginning-of-line)
           (when (re-search-forward tag-regex (point-at-eol) 'goto-eol)
+            (setq full-tagname (or (anything-etags+-match-string 2) tagname))
             (beginning-of-line)
             (save-excursion (setq tag-info (etags-snarf-tag)))
             (re-search-forward "\\s-*\\(.*?\\)\\s-*\^?" (point-at-eol) t)
@@ -291,7 +352,7 @@ forward are related to this variable.")
             (end-of-line)
             ;;(setq src-file-name (etags-file-of-tag))
             (setq src-file-name (file-of-tag))
-            (let ((display)(real (list  src-file-name tag-info)))
+            (let ((display)(real (list  src-file-name tag-info full-tagname)))
               (if anything-etags+-use-short-file-name
                   (setq src-file-name (file-name-nondirectory src-file-name)))
               (setq display (concat tag-line
@@ -310,12 +371,24 @@ forward are related to this variable.")
    And switch buffer and jump tag position.."
   (let ((src-file-name (car candidate))
         (tag-info (nth 1 candidate))
+        (tagname (nth 2 candidate))
         src-file-buf)
     (when (file-exists-p src-file-name)
       ;; Jump to tag position when
       ;; tag file is valid.
       (setq src-file-buf (find-file src-file-name))
       (etags-goto-tag-location  tag-info)
+      
+      (beginning-of-line)
+      (when (search-forward tagname (point-at-eol) t)
+        (goto-char (match-beginning 0))
+        (setq tagname (thing-at-point 'symbol))
+        (beginning-of-line)
+        (search-forward tagname (point-at-eol) t)
+        (goto-char (match-beginning 0))
+        (when(and anything-etags+-highlight-tag-after-jump
+                  (not anything-in-persistent-action))
+          (anything-etags+-highlight (match-beginning 0) (match-end 0))))
       
       (when (and anything-in-persistent-action ;;color
                  (fboundp 'anything-match-line-color-current-line))
@@ -340,7 +413,9 @@ forward are related to this variable.")
         (ring-remove find-tag-marker-ring)
         ))
  ;;     )
-    (ring-insert find-tag-marker-ring (point-marker))  ;;you can use M=* go back
+      (if anything-etags+-use-xemacs-etags-p ;;you can use M=* go back
+          (push-tag-mark)
+        (ring-insert find-tag-marker-ring (point-marker)))
     (setq anything-etags+-current-marker-in-tag-marker-ring (point-marker))
     )
   (anything-etags+-find-tag candidate);;core func.
@@ -382,15 +457,11 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
 
 (defvar anything-c-source-etags+-select
       '((name . "Etags+")
-        (candidates . anything-etags+-get-candidates)
+        (candidates . anything-etags+-get-candidates-with-cache-support)
         (volatile);;candidates
-        ;;match function ,run after all candidates are collected
-        ;;do narrowing ,actually all candidates should be returned
-        (match (lambda (candidate)
-                 ;; list basename matches first
-                 (string-match
-                  (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  anything-pattern)
-                  candidate)))
+        (pattern-transformer (lambda (anything-pattern)
+                               (setq anything-etags+-untransformed-anything-pattern anything-pattern)
+                               (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  anything-pattern)))
         (requires-pattern  . 3);;need at least 3 char
         (delayed);; (setq anything-idle-delay-4-anthing-etags+ 1)
         (action ("Goto the location" . anything-c-etags+-goto-location))))
