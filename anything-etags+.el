@@ -164,7 +164,7 @@
   "*If non-nil, temporarily highlight the tag
   after you jump to it.
   (borrowed from etags-select.el)"
-  :group 'etags-select-mode
+  :group 'anything-etags+-
   :type 'boolean)
 (defcustom anything-etags+-highlight-delay 1.0
   "*How long to highlight the tag.
