@@ -1,14 +1,14 @@
-;;; anything-etags+.el ---Another Etags anything.el interface
+;;;; anything-etags+.el ---Another Etags anything.el interface
 
 ;; Filename: anything-etags+.el
-;; Description:Another Etags anything.el interface
+;; Description: Another Etags anything.el interface 
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-02-23
 ;; Version: 0.1.1
-;; URL: 
-;; Keywords: anything, etags
+;; URL:http://www.emacswiki.org/emacs/anything-etags+.el
+;; Keywords: anything, etags ,go back and forward 
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
 ;;   I am trying to make it work with XEmacs ,
 ;;   but I haven't tested it on XEmacs.
@@ -65,7 +65,7 @@
 ;; (define-key anything-command-map (kbd "C-e") 'anything-etags+-select)
 ;;
 ;; anything-etags+.el also support history go back ,go forward and list tag
-;; histories you have visited.(must use command here.)
+;; histories you have visited.(must use commands list here:)
 ;;  `anything-etags+-history'
 ;;    List all tag you have visited with `anything'.
 ;;  `anything-etags+-history-go-back'
@@ -126,6 +126,8 @@
 ;;
 ;; Below are complete command list:
 ;;
+;;  `anything-etags+-select'
+;;    Tag jump using etags and `anything'.
 ;;  `anything-etags+-select-at-point'
 ;;    Tag jump with current symbol using etags and `anything'.
 ;;  `anything-etags+-select-one-key'
@@ -134,6 +136,8 @@
 ;;    Go Back. 
 ;;  `anything-etags+-history-go-forward'
 ;;    Go Forward. 
+;;  `anything-etags+-history'
+;;    show all tag historys using `anything'
 ;;
 ;;; Customizable Options:
 ;;
@@ -557,9 +561,9 @@ needn't search tag file again."
               init-pattern  prompt nil))
 
 (defun anything-etags+-select()
-  (interactive)
   "Tag jump using etags and `anything'.
 If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
+  (interactive)
   (let ((anything-execute-action-at-once-if-one t)
         (anything-candidate-number-limit nil)
         (anything-idle-delay anything-idle-delay-4-anything-etags+))
@@ -739,6 +743,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
                    ("Clear all history" . anything-etags+-history-clear-all)))))
 
 (defun anything-etags+-history()
+  "show all tag historys using `anything'"
   (interactive)
   (let ((anything-execute-action-at-once-if-one t)
         (anything-quit-if-no-candidate
