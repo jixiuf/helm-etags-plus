@@ -1,5 +1,5 @@
 ;;;; anything-etags+.el ---Another Etags anything.el interface
-;;;; Time-stamp: <Joseph 2011-04-10 20:44:09>
+;;;; Time-stamp: <Joseph 2011-04-10 20:44:29>
 
 ;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
@@ -7,7 +7,7 @@
 ;; Maintainer: Joseph <jixiuf@gmail.com>
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-02-23
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; URL:http://www.emacswiki.org/emacs/anything-etags+.el
 ;; Keywords: anything, etags ,go back and forward
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
