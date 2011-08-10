@@ -1,5 +1,5 @@
 ;;; anything-etags+.el ---Another Etags anything.el interface
-;;; Time-stamp: <Joseph 2011-06-01 10:29:25 ÐÇÆÚÈý>
+;;; Time-stamp: <Joseph 2011-06-01 10:29:25 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½>
 
 ;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
@@ -9,7 +9,7 @@
 ;; Created: 2011-02-23
 ;; Version: 0.1.2
 ;; URL:http://www.emacswiki.org/emacs/anything-etags+.el
-;; Keywords: anything, etags ,go back and forward
+;; Keywords: anything, etags
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
 ;;   I am trying to make it work with XEmacs ,
 ;;   but I haven't tested it on XEmacs.
