@@ -1,5 +1,5 @@
 ;;; anything-etags+.el ---Another Etags anything.el interface
-;;; Time-stamp: <Joseph 2011-09-28 23:46:11 星期三>
+;;; Time-stamp: <Joseph 2011-09-29 00:25:46 星期四>
 
 ;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
@@ -564,6 +564,7 @@ needn't search tag file again."
               ;; Initialize input with current symbol
               init-pattern  prompt nil))
 
+;;;###autoload
 (defun anything-etags+-select()
   "Tag jump using etags and `anything'.
 If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
@@ -573,6 +574,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
         (anything-idle-delay anything-idle-delay-4-anything-etags+))
     (anything-etags+-select-internal nil "Find Tag(require 3 char): ")))
 
+;;;###autoload
 (defun anything-etags+-select-at-point()
   "Tag jump with current symbol using etags and `anything'."
   (interactive)
@@ -585,6 +587,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
              (if (featurep 'anything-match-plugin) " "))
      "Find Tag: ")))
 
+;;;###autoload
 (defun anything-etags+-select-one-key (&optional args)
   "you can bind this to `M-.'"
   (interactive "P")
@@ -592,6 +595,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
       (anything-etags+-select)
       (anything-etags+-select-at-point)))
 
+;;;###autoload
 (defvar anything-c-source-etags+-select
       '((name . "Etags+")
         (init . anything-etags+-get-available-tag-table-buffers)
@@ -691,6 +695,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
           (ring-remove anything-etags+-tag-marker-ring)))
 
 
+;;;###autoload
 (defun anything-etags+-history-go-back()
   "Go Back. "
   (interactive)
@@ -702,6 +707,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
         (anything-etags+-history-go-internel next-marker)
         (setq anything-etags+-current-marker-in-tag-marker-ring next-marker))))
 
+;;;###autoload
 (defun anything-etags+-history-go-forward()
   "Go Forward. "
   (interactive)
@@ -746,6 +752,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
         (action . (("Go" . anything-etags+-history-action-go)
                    ("Clear all history" . anything-etags+-history-clear-all)))))
 
+;;;###autoload
 (defun anything-etags+-history()
   "show all tag historys using `anything'"
   (interactive)
