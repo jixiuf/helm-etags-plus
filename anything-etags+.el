@@ -1,5 +1,5 @@
 ;;; anything-etags+.el ---Another Etags anything.el interface
-;;; Time-stamp: <Joseph 2011-09-29 00:25:46 星期四>
+;;; Time-stamp: <Joseph 2011-09-29 00:56:27 星期四>
 
 ;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
@@ -404,7 +404,7 @@ hits the start of file."
     (if (string-match "^ \\*Anything" (buffer-name))
         buf
        (rename-buffer (concat" *Anything etags+:" (buffer-name) "*") t)
-      )))
+      ))buf)
 
 (defun anything-etags+-get-tag-table-buffer (tag-file)
   "Get tag table buffer for a tag file."
