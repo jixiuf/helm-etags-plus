@@ -1,5 +1,5 @@
 ;;; anything-etags+.el ---Another Etags anything.el interface
-;;; Time-stamp: <Joseph 2011-06-01 10:29:25 ������>
+;;; Time-stamp: <Joseph 2011-09-28 23:46:11 星期三>
 
 ;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
@@ -489,10 +489,10 @@ needn't search tag file again."
             (end-of-line)
             ;;(setq src-file-name (etags-file-of-tag))
             (setq src-file-name (anything-etags+-file-of-tag))
-            (let ((tag-table-parent (file-name-directory (buffer-file-name tag-table-buffer))))
-              (when (string-match  tag-table-parent src-file-name)
-                (setq src-file-name (substring src-file-name (length  tag-table-parent)))))
             (let ((display)(real (list  src-file-name tag-info full-tagname)))
+              (let ((tag-table-parent (file-name-directory (buffer-file-name tag-table-buffer))))
+                (when (string-match  tag-table-parent src-file-name)
+                  (setq src-file-name (substring src-file-name (length  tag-table-parent)))))
               (if anything-etags+-use-short-file-name
                   (setq src-file-name (file-name-nondirectory src-file-name)))
               (setq display (concat tag-line
