@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-10-14 23:38:33 星期五
+;; Last Updated: Joseph 2011-10-15 00:02:28 星期六
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -259,8 +259,10 @@ then the cached candidates can be reused ,needn't find from the tag file.")
 (defvar anything-etags+-untransformed-anything-pattern
   "this variable is seted in func of transformed-pattern .and is used when
 getting candidates.")
+
 ;;; Functions
 (defun anything-etags+-match-string (num &optional string))
+(defun anything-etags+-file-truename (filename))
 
 (if (string-match "XEmacs" emacs-version)
       (fset 'anything-etags+-match-string 'match-string)
@@ -269,6 +271,10 @@ getting candidates.")
       (unless (fboundp 'symlink-expand-file-name)
         (fset 'symlink-expand-file-name 'file-truename))))
 
+(if (fboundp 'symlink-expand-file-name)
+    (fset 'anything-etags+-file-truename 'symlink-expand-file-name)
+  (fset 'anything-etags+-file-truename 'file-truename)
+  )
 
 (defun anything-etags+-case-fold-search ()
   "Get case-fold search."
@@ -386,11 +392,9 @@ hits the start of file."
   (save-excursion
     (re-search-backward "\f\n\\([^\n]+\\),[0-9]*\n")
     (let ((str (buffer-substring (match-beginning 1) (match-end 1))))
-      (if (string-match "XEmacs" emacs-version)
-          (expand-file-name str
-                            (symlink-expand-file-name default-directory))
-        (expand-file-name str
-                          (file-truename default-directory))))))
+      (expand-file-name str
+                        (anything-etags+-file-truename default-directory))
+      )))
 
 (defun anything-etags+-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
@@ -512,8 +516,8 @@ needn't search tag file again."
             ;;(setq src-file-name (etags-file-of-tag))
             (setq src-file-name (anything-etags+-file-of-tag))
             (let ((display)(real (list  src-file-name tag-info full-tagname)))
-              (let ((tag-table-parent (file-name-directory (buffer-file-name tag-table-buffer))))
-                (when (string-match  tag-table-parent src-file-name)
+              (let ((tag-table-parent (anything-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer)))))
+                (when (string-match  tag-table-parent (anything-etags+-file-truename src-file-name))
                   (setq src-file-name (substring src-file-name (length  tag-table-parent)))))
               (if anything-etags+-use-short-file-name
                   (setq src-file-name (file-name-nondirectory src-file-name)))
