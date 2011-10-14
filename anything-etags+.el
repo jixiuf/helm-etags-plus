@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-10-14 22:59:51 星期五
+;; Last Updated: Joseph 2011-10-14 23:35:11 星期五
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -437,7 +437,7 @@ not visiting a file"
       (if anything-etags+-use-xemacs-etags-p
           (setq tag-table-buffer (get-tag-table-buffer tag-file))
         (visit-tags-table-buffer tag-file)
-        (setq tag-table-buffer (get-file-buffer tag-file)))
+        (setq tag-table-buffer (find-buffer-visiting tag-file)))
       (set-buffer current-buf)
       (anything-etags+-rename-tag-file-buffer-maybe tag-table-buffer))))
 
