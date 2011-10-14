@@ -45,6 +45,8 @@
 ;; This package use `anything' as a interface to find tag with Etags.
 ;;
 ;;  it support multiple tag files.
+;;  and it can recursively searches each parent directory for a file named
+;;  'TAGS'. so you needn't add this special to `tags-table-list'
 ;;
 ;;  if you use GNU/Emacs ,you can set `tags-table-list' like this.
 ;;  (setq tags-table-list '("/java/tags/TAGS"
@@ -390,14 +392,32 @@ hits the start of file."
         (expand-file-name str
                           (file-truename default-directory))))))
 
+(defun anything-etags+-find-tags-file ()
+  "recursively searches each parent directory for a file named 'TAGS' and returns the
+path to that file or nil if a tags file is not found. Returns nil if the buffer is
+not visiting a file"
+  (progn
+    (defun find-tags-file-r (path)
+      "find the tags file from the parent directories"
+      (let* ((parent (file-name-directory path))
+             (possible-tags-file (concat parent "TAGS")))
+        (cond
+         ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
+         ((string= "/TAGS" possible-tags-file) (message "no tags file found in parent directory"))
+         (t (find-tags-file-r (directory-file-name parent))))))
+
+    (if (buffer-file-name)
+        (catch 'found-it
+          (find-tags-file-r (buffer-file-name)))
+      (message "buffer is not visiting a file") nil)))
 
 (defun anything-etags+-get-tag-files()
   "Get tag files."
   (if anything-etags+-use-xemacs-etags-p
       (let ((tags-build-completion-table nil))
         (buffer-tag-table-list))
-    (mapcar 'tags-expand-table-name tags-table-list))
-  )
+    (mapcar 'tags-expand-table-name
+            (add-to-list 'tags-table-list (anything-etags+-find-tags-file)))))
 
 
 (defun anything-etags+-rename-tag-file-buffer-maybe(buf)
@@ -412,7 +432,8 @@ hits the start of file."
   (when (file-exists-p tag-file)
     (let ((tag-table-buffer) (current-buf (current-buffer))
           (tags-revert-without-query t)
-          (large-file-warning-threshold nil))
+          (large-file-warning-threshold nil)
+          (tags-add-tables t))
       (if anything-etags+-use-xemacs-etags-p
           (setq tag-table-buffer (get-tag-table-buffer tag-file))
         (visit-tags-table-buffer tag-file)
