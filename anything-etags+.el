@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-10-14 23:35:11 星期五
+;; Last Updated: Joseph 2011-10-14 23:38:33 星期五
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -155,7 +155,7 @@
 ;;    default = t
 ;;  `anything-etags+-highlight-delay'
 ;;    *How long to highlight the tag.
-;;    default = 1.0
+;;    default = 0.2
 
 ;;; Code:
 
@@ -188,7 +188,7 @@
   :group 'anything-etags+-
   :type 'boolean)
 
-(defcustom anything-etags+-highlight-delay 1.0
+(defcustom anything-etags+-highlight-delay 0.2
   "*How long to highlight the tag.
   (borrowed from etags-select.el)"
   :group 'anything-etags+-
