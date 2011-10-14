@@ -1,13 +1,13 @@
 ;;; anything-etags+.el ---Another Etags anything.el interface
-;; Time-stamp: <Joseph 2011-09-29 03:00:27 星期四>
 
-;; Filename: anything-etags+.el
 ;; Description: Another Etags anything.el interface
+;; Filename: anything-etags+.el
+;; Created: 2011-02-23
+;; Last Updated: Joseph 2011-10-14 22:59:51 星期五
+;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
-;; Created: 2011-02-23
-;; Version: 0.1.3
 ;; URL:http://www.emacswiki.org/emacs/anything-etags+.el
 ;; screencast:http://screencast-repos.googlecode.com/files/emacs-anything-etags-puls.mp4.bz2
 ;; Keywords: anything, etags
