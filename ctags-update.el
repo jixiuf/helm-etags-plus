@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 14:08:40 星期日
+;; Last Updated: Joseph 2011-10-16 14:46:10 星期日
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -24,6 +24,28 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;; Just put ctags-update.el to your load-path.
+;; The load-path is usually ~/elisp/.
+;; It's set in your ~/.emacs like this:
+;; (add-to-list 'load-path (expand-file-name "~/elisp"))
+;;
+;; And the following to your ~/.emacs startup file.
+;;
+;; (require 'ctags-update)
+;; (ctags-update-minor-mode 1)
+;;or
+;; (autoload 'ctags-update-minor-mode "ctags-update" "update TAGS using ctags" t)
+;; (ctags-update-minor-mode 1)
+
+;; then when you save a file ,`ctags-update' will recursively searches each
+;; parent directory for a file named 'TAGS'. if found ,it will use
+;; `exuberant-ctags' regenerate TAGS.
+;;
+;; if you want to update TAGS only when you want.
+;; you can
+;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
+;; and
+;;     M-x : ctags-update
 
 ;;
 
@@ -43,6 +65,9 @@
 ;;  `ctags-update-command'
 ;;    now it only support `exuberant-ctags'
 ;;    default = "ctags"
+;;  `ctags-update-other-options'
+;;    other options for ctags
+;;    default = (concat " --exclude='*.elc'" " --exclude='*.class'" " --exclude='.git'" " --exclude='.svn'" ...)
 
 ;;; Code:
 
@@ -58,6 +83,21 @@ you should download `exuberant-ctags' and make sure
 the ctags is under $PATH before `emacs-23.3/bin/'"
   :type 'string
   :group 'ctags-update
+  )
+(defcustom ctags-update-other-options
+  (concat
+   " --exclude='*.elc'"
+   " --exclude='*.class'"
+   " --exclude='.git'"
+   " --exclude='.svn'"
+   " --exclude='SCCS'"
+   " --exclude='RCS'"
+   " --exclude='CVS'"
+   " --exclude='EIFGEN'"
+   )
+  "other options for ctags"
+  :group 'ctags-update
+  :type 'string
   )
 
 (defvar ctags-update-minor-mode-map
@@ -84,10 +124,11 @@ the ctags is under $PATH before `emacs-23.3/bin/'"
   "`tagfile-full-path' is the full path of TAGS file . when files in or under the same directory
 with `tagfile-full-path' changed ,then TAGS file need to be updated. this function will generate
 the command to update TAGS"
-  (if (string-match ctags-update-command "ctags")
-      (format  "ctags -f %s -e -R %s"
-               (or save-tagfile-to-as tagfile-full-path)
-               (file-name-directory tagfile-full-path))))
+  (let ((cmd (format  "ctags -f %s -e -R %s %s"
+                       (or save-tagfile-to-as tagfile-full-path)
+                       ctags-update-other-options
+                       (file-name-directory tagfile-full-path))))
+    (message cmd) cmd))
 
 (defun ctags-update-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
