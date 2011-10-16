@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 15:15:46 星期日
+;; Last Updated: Joseph 2011-10-16 16:54:24 星期日
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -120,17 +120,25 @@ the ctags is under $PATH before `emacs-23.3/bin/'"
     (fset 'ctags-update-file-truename 'symlink-expand-file-name)
   (fset 'ctags-update-file-truename 'file-truename))
 
-
 (defun ctags-update-command (tagfile-full-path &optional save-tagfile-to-as)
   "`tagfile-full-path' is the full path of TAGS file . when files in or under the same directory
 with `tagfile-full-path' changed ,then TAGS file need to be updated. this function will generate
 the command to update TAGS"
-  (let ((cmd (format  "%s -f %s -e -R %s %s"
+  (let ((cmd (format  "\"%s\" -f \"%s\" -e -R %s "
                       ctags-update-command
-                       (or save-tagfile-to-as tagfile-full-path)
-                       ctags-update-other-options
-                       (file-name-directory tagfile-full-path))))
-     cmd))
+                      (get-system-file-path (or save-tagfile-to-as tagfile-full-path))
+                      ctags-update-other-options
+                      ;; (get-system-file-path (file-name-directory tagfile-full-path))
+                      )))
+    cmd))
+
+(defun get-system-file-path(file-path)
+  "when on windows `expand-file-name' will translate from \\ to /
+some times it is not needed . then this function is used to translate /
+to \\ when on windows"
+  (if (equal system-type 'windows-nt)
+      (convert-standard-filename  file-path)
+    file-path))
 
 (defun ctags-update-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
@@ -161,6 +169,7 @@ or enable `ctags-update-minor-mode'"
                 (not (string-equal (ctags-update-file-truename tags-file-name)
                                    (ctags-update-file-truename (buffer-file-name)))))
       (unless (get-process "update TAGS");;if "update TAGS" process is not already running
+        (cd (file-name-directory tags-file-name))
         (setq process  (start-process-shell-command
                         "update TAGS"
                         " *update TAGS*"
