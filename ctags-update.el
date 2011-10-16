@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 14:48:07 星期日
+;; Last Updated: Joseph 2011-10-16 14:53:01 星期日
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -129,7 +129,7 @@ the command to update TAGS"
                        (or save-tagfile-to-as tagfile-full-path)
                        ctags-update-other-options
                        (file-name-directory tagfile-full-path))))
-    (message cmd) cmd))
+     cmd))
 
 (defun ctags-update-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
