@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 14:47:13 星期日
+;; Last Updated: Joseph 2011-10-16 14:48:07 星期日
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -40,7 +40,7 @@
 
 ;; then when you save a file ,`ctags-update' will recursively searches each
 ;; parent directory for a file named 'TAGS'. if found ,it will use
-;; `exuberant-ctags' regenerate TAGS.
+;; `exuberant-ctags' update TAGS.
 ;;
 ;; if you want to update TAGS only when you want.
 ;; you can
