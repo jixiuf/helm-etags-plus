@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 16:54:24 星期日
+;; Last Updated: Joseph 2011-10-16 17:08:08 星期日
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -164,23 +164,23 @@ not visiting a file"
 you can call this function directly ,or add it to `after-save-hook'
 or enable `ctags-update-minor-mode'"
   (interactive)
-  (let ((tags-file-name (ctags-update-find-tags-file)) process)
-    (when (and  tags-file-name
+  (let (tags-file-name process)
+    (when  (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
+                (setq tags-file-name (ctags-update-find-tags-file))
                 (not (string-equal (ctags-update-file-truename tags-file-name)
                                    (ctags-update-file-truename (buffer-file-name)))))
-      (unless (get-process "update TAGS");;if "update TAGS" process is not already running
-        (cd (file-name-directory tags-file-name))
-        (setq process  (start-process-shell-command
-                        "update TAGS"
-                        " *update TAGS*"
-                        (ctags-update-command tags-file-name )))
-        (set-process-sentinel process
-                              (lambda (proc change)
-                                (when (string-match "\\(finished\\|exited\\)" change)
-                                  (kill-buffer " *update TAGS*")
-                                  ;; (rename-file tmp-tags-file-name tags-file-name  t)
-                                  (message "TAGS in parent directory is updated. "  )
-                                  )))))))
+      (cd (file-name-directory tags-file-name))
+      (setq process  (start-process-shell-command
+                      "update TAGS"
+                      " *update TAGS*"
+                      (ctags-update-command tags-file-name )))
+      (set-process-sentinel process
+                            (lambda (proc change)
+                              (when (string-match "\\(finished\\|exited\\)" change)
+                                (kill-buffer " *update TAGS*")
+                                ;; (rename-file tmp-tags-file-name tags-file-name  t)
+                                (message "TAGS in parent directory is updated. "  )
+                                ))))))
 
 ;;;###autoload
 (define-minor-mode ctags-update-minor-mode
