@@ -2,7 +2,8 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 14:46:10 星期日
+;; Last Updated: Joseph 2011-10-16 14:47:13 星期日
+;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
