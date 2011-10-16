@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 14:53:01 星期日
+;; Last Updated: Joseph 2011-10-16 15:15:46 星期日
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -77,7 +77,7 @@
   :prefix "ctags-update"
   :group 'etags)
 
-(defcustom  ctags-update-command "ctags"
+(defcustom ctags-update-command "ctags"
   "now it only support `exuberant-ctags'
 take care it is not the ctags in `emacs-23.3/bin/'
 you should download `exuberant-ctags' and make sure
@@ -125,7 +125,8 @@ the ctags is under $PATH before `emacs-23.3/bin/'"
   "`tagfile-full-path' is the full path of TAGS file . when files in or under the same directory
 with `tagfile-full-path' changed ,then TAGS file need to be updated. this function will generate
 the command to update TAGS"
-  (let ((cmd (format  "ctags -f %s -e -R %s %s"
+  (let ((cmd (format  "%s -f %s -e -R %s %s"
+                      ctags-update-command
                        (or save-tagfile-to-as tagfile-full-path)
                        ctags-update-other-options
                        (file-name-directory tagfile-full-path))))
