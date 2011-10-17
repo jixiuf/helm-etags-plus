@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-17 19:51:55 星期一
+;; Last Updated: Joseph 2011-10-17 19:54:35 星期一
 ;; Version: 0.1.1
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -48,7 +48,10 @@
 ;; and
 ;;     M-x : ctags-update
 
-;;
+;; on windows ,you can custom `ctags-update-command' like this:
+;; (when (equal system-type 'windows-nt)
+;;   (setq ctags-update-command (expand-file-name  "~/.emacs.d/bin/ctags.exe")))
+
 
 ;;; Commands:
 ;;
