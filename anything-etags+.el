@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-10-16 13:40:31 星期日
+;; Last Updated: Joseph 2011-10-17 21:06:07 星期一
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -407,9 +407,8 @@ not visiting a file"
              (possible-tags-file (concat parent "TAGS")))
         (cond
          ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
-         ((string= "/TAGS" possible-tags-file) (message "no tags file found in parent directory") nil)
+         ((string-match "^/TAGS\\|^[a-zA-Z]:/TAGS" possible-tags-file) nil)
          (t (find-tags-file-r (directory-file-name parent))))))
-
     (if (buffer-file-name)
         (catch 'found-it
           (find-tags-file-r (buffer-file-name)))
