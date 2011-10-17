@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-17 19:56:22 星期一
+;; Last Updated: Joseph 2011-10-17 21:01:33 星期一
 ;; Version: 0.1.1
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -47,6 +47,8 @@
 ;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
 ;; and
 ;;     M-x : ctags-update
+;; with prefix `C-u' ,then you can generate a new TAGS file in your
+;; selected directory.
 
 ;; on windows ,you can custom `ctags-update-command' like this:
 ;; (when (equal system-type 'windows-nt)
@@ -162,16 +164,18 @@ not visiting a file"
       (message "buffer is not visiting a file") nil)))
 
 ;;;###autoload
-(defun ctags-update()
+(defun ctags-update(&optional args)
   "update TAGS in parent directory using `exuberant-ctags'
 you can call this function directly ,or add it to `after-save-hook'
-or enable `ctags-update-minor-mode'"
-  (interactive)
+or enable `ctags-update-minor-mode'
+with prefix `C-u' ,then you can generate a new TAGS file in directory"
+  (interactive "P")
   (let (tags-file-name process)
-    (when  (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
-                (setq tags-file-name (ctags-update-find-tags-file))
-                (not (string-equal (ctags-update-file-truename tags-file-name)
-                                   (ctags-update-file-truename (buffer-file-name)))))
+    (when (or (and args (setq tags-file-name (read-directory-name "Generate new TAGS to:" )))
+              (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
+                   (setq tags-file-name (ctags-update-find-tags-file))
+                   (not (string-equal (ctags-update-file-truename tags-file-name)
+                                      (ctags-update-file-truename (buffer-file-name))))))
       (cd (file-name-directory tags-file-name))
       (setq process  (start-process-shell-command
                       "update TAGS"
