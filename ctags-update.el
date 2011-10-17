@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-17 21:14:39 星期一
+;; Last Updated: Joseph 2011-10-17 21:16:15 星期一
 ;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -60,7 +60,7 @@
 ;; Below are complete command list:
 ;;
 ;;  `ctags-update'
-;;    update TAGS in parent directory using `exuberant-ctags'
+;;    update TAGS in parent directory using `exuberant-ctags' you
 ;;  `ctags-update-minor-mode'
 ;;    auto update TAGS using `exuberant-ctags' in parent directory.
 ;;
@@ -165,10 +165,10 @@ not visiting a file"
 
 ;;;###autoload
 (defun ctags-update(&optional args)
-  "update TAGS in parent directory using `exuberant-ctags'
-you can call this function directly ,or add it to `after-save-hook'
-or enable `ctags-update-minor-mode'
-with prefix `C-u' ,then you can generate a new TAGS file in directory"
+  "update TAGS in parent directory using `exuberant-ctags' you
+can call this function directly , or enable
+`ctags-update-minor-mode' or with prefix `C-u' then you can
+generate a new TAGS file in directory"
   (interactive "P")
   (let (tags-file-name process)
     (when (or (and args (setq tags-file-name
