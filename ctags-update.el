@@ -2,8 +2,8 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-17 21:01:33 星期一
-;; Version: 0.1.1
+;; Last Updated: Joseph 2011-10-17 21:14:39 星期一
+;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -171,21 +171,21 @@ or enable `ctags-update-minor-mode'
 with prefix `C-u' ,then you can generate a new TAGS file in directory"
   (interactive "P")
   (let (tags-file-name process)
-    (when (or (and args (setq tags-file-name (read-directory-name "Generate new TAGS to:" )))
+    (when (or (and args (setq tags-file-name
+                              (expand-file-name
+                               "TAGS" (read-directory-name "Generate new TAGS to:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
                    (setq tags-file-name (ctags-update-find-tags-file))
                    (not (string-equal (ctags-update-file-truename tags-file-name)
                                       (ctags-update-file-truename (buffer-file-name))))))
       (cd (file-name-directory tags-file-name))
       (setq process  (start-process-shell-command
-                      "update TAGS"
-                      " *update TAGS*"
+                      "update TAGS" " *update TAGS*"
                       (ctags-update-command tags-file-name )))
       (set-process-sentinel process
                             (lambda (proc change)
                               (when (string-match "\\(finished\\|exited\\)" change)
                                 (kill-buffer " *update TAGS*")
-                                ;; (rename-file tmp-tags-file-name tags-file-name  t)
                                 (message "TAGS in parent directory is updated. "  )
                                 ))))))
 
