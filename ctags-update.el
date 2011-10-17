@@ -1,8 +1,8 @@
 ;;; ctags-update.el --- auto update TAGS in parent directory using exuberant-ctags -*- coding:utf-8 -*-
 
-;; Description: auto update TAGS using
+;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-17 19:54:35 星期一
+;; Last Updated: Joseph 2011-10-17 19:56:22 星期一
 ;; Version: 0.1.1
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
