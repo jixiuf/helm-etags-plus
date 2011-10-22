@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-19 10:09:35 星期六
+;; Last Updated: Joseph 2011-10-22 17:54:27 星期六
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -420,8 +420,12 @@ not visiting a file"
   (if anything-etags+-use-xemacs-etags-p
       (let ((tags-build-completion-table nil))
         (buffer-tag-table-list))
-    (mapcar 'tags-expand-table-name
-            (add-to-list 'tags-table-list (anything-etags+-find-tags-file)))))
+    (let ((local-tag  (anything-etags+-find-tags-file)))
+      (mapcar 'tags-expand-table-name
+              (if local-tag
+                  (add-to-list 'tags-table-list (anything-etags+-find-tags-file))
+                tags-table-list)
+              ))))
 
 
 (defun anything-etags+-rename-tag-file-buffer-maybe(buf)
