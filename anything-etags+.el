@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-10-22 18:02:51 星期六
+;; Last Updated: Joseph 2011-10-22 18:04:03 星期六
 ;; Version: 0.1.4
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -427,7 +427,6 @@ not visiting a file"
         (when (not (file-exists-p tag))
           (setq  tags-table-list (delete tag tags-table-list))))
       (mapcar 'tags-expand-table-name tags-table-list))))
-
 
 (defun anything-etags+-rename-tag-file-buffer-maybe(buf)
   (with-current-buffer buf
