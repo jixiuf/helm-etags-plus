@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-10-16 17:08:08 星期日
+;; Last Updated: Joseph 2011-11-17 16:50:43 星期四
 ;; Version: 0.1.0
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -151,7 +151,7 @@ not visiting a file"
              (possible-tags-file (concat parent "TAGS")))
         (cond
          ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
-         ((string= "/TAGS" possible-tags-file) nil)
+         ((string-match "^/TAGS\\|^[a-zA-Z]:/TAGS" possible-tags-file) nil)
          (t (find-tags-file-r (directory-file-name parent))))))
     (if (buffer-file-name)
         (catch 'found-it
