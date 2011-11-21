@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-21 16:42:32 星期一
+;; Last Updated: Joseph 2011-11-21 16:46:18 星期一
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -47,7 +47,7 @@
 ;;
 ;;  it support multiple tag files.
 ;;  and it can recursively searches each parent directory for a file named
-;;  'TAGS'. so you needn't add this special to `tags-table-list'
+;;  'TAGS'. so you needn't add this special file to `tags-table-list'
 ;;
 ;;  if you use GNU/Emacs ,you can set `tags-table-list' like this.
 ;;  (setq tags-table-list '("/java/tags/TAGS"
