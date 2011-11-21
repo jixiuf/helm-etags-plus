@@ -3,9 +3,9 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-21 13:49:15 星期一
+;; Last Updated: Joseph 2011-11-21 13:52:13 星期一
 ;; Version: 0.1.4
-;; Author: Joseph <jixiuf@gmail.com>
+;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; URL:http://www.emacswiki.org/emacs/anything-etags+.el
