@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 17:57:42 星期一
+;; Last Updated: Joseph 2011-11-21 18:02:16 星期一
 ;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -118,7 +118,10 @@ ctags-update will be called"
   :group 'ctags-update
   :type 'string)
 
-(defvar ctags-update-last-update-time (- (time-to-seconds (current-time)) 1))
+(defvar ctags-update-last-update-time
+  "make sure when user first call `ctags-update' it can run immediately "
+  (- (time-to-seconds (current-time)) ctags-update-delay-seconds 1))
+
 (defvar ctags-update-minor-mode-map
   (let ((map (make-sparse-keymap)))
     map))
@@ -156,7 +159,6 @@ the command to update TAGS"
            (list tagdir-without-slash-appended)
            )))
     args))
-
 
 (defun get-system-file-path(file-path)
   "when on windows `expand-file-name' will translate from \\ to /
