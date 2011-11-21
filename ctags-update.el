@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 18:02:16 星期一
+;; Last Updated: Joseph 2011-11-21 20:39:16 星期一
 ;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -119,8 +119,9 @@ ctags-update will be called"
   :type 'string)
 
 (defvar ctags-update-last-update-time
+  (- (time-to-seconds (current-time)) ctags-update-delay-seconds 1)
   "make sure when user first call `ctags-update' it can run immediately "
-  (- (time-to-seconds (current-time)) ctags-update-delay-seconds 1))
+  )
 
 (defvar ctags-update-minor-mode-map
   (let ((map (make-sparse-keymap)))
