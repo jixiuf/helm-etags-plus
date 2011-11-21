@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 20:54:29 星期一
+;; Last Updated: Joseph 2011-11-21 21:01:09 星期一
 ;; Version: 0.1.3
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -149,11 +149,9 @@ the command to update TAGS"
          (tagdir-without-slash-appended (substring tagdir-with-slash-appended 0 (1- length-of-tagfile-directory)))
          (args
           (append
-           (list "-f")
+           (list "-R" "-e" "-f")
            (list (get-system-file-path (or save-tagfile-to-as tagfile-full-path)))
-           (list "-e")
            ctags-update-other-options
-           (list "-R")
            (list tagdir-without-slash-appended)
            )))
     args))
