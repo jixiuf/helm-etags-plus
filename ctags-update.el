@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-07 15:05:49 星期一
+;; Last Updated: Joseph 2011-11-21 17:11:34 星期一
 ;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -73,6 +73,9 @@
 ;;  `ctags-update-command'
 ;;    now it only support `exuberant-ctags'
 ;;    default = "ctags"
+;;  `ctags-update-delay-seconds'
+;;    seconds between each `ctags-update'.
+;;    default = (* 5 60)
 ;;  `ctags-update-other-options'
 ;;    other options for ctags
 ;;    default = (list "--exclude='*.elc'" "--exclude='*.class'" "--exclude='.git'" "--exclude='.svn'" ...)
@@ -92,6 +95,14 @@ the ctags is under $PATH before `emacs-23.3/bin/'"
   :type 'string
   :group 'ctags-update
   )
+
+(defcustom ctags-update-delay-seconds  (* 5 60) ; 5 mins
+  "seconds between each `ctags-update'.
+current-time - last-time must bigger than this value ,then
+ctags-update will be called"
+  :type 'integer
+  :group 'ctags-update)
+
 (defcustom ctags-update-other-options
   (list
    "--exclude='*.elc'"
@@ -105,9 +116,9 @@ the ctags is under $PATH before `emacs-23.3/bin/'"
    )
   "other options for ctags"
   :group 'ctags-update
-  :type 'string
-  )
+  :type 'string)
 
+(defvar ctags-update-last-update-time (- (time-to-seconds (current-time)) 1))
 (defvar ctags-update-minor-mode-map
   (let ((map (make-sparse-keymap)))
     map))
@@ -179,9 +190,13 @@ generate a new TAGS file in directory"
                               (expand-file-name
                                "TAGS" (read-directory-name "Generate new TAGS to:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
+                   (> (- (time-to-seconds (current-time))
+                         ctags-update-last-update-time)
+                      ctags-update-delay-seconds)
                    (setq tags-file-name (ctags-update-find-tags-file))
                    (not (string-equal (ctags-update-file-truename tags-file-name)
                                       (ctags-update-file-truename (buffer-file-name))))))
+      (setq ctags-update-last-update-time (time-to-seconds (current-time)));;update time
       (cd (file-name-directory tags-file-name))
       (setq process
             (apply 'start-process ;;
@@ -209,6 +224,5 @@ generate a new TAGS file in directory"
     (remove-hook 'after-save-hook 'ctags-update)
     )
   )
-
 (provide 'ctags-update)
 ;;; ctags-update.el ends here
