@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 20:51:07 星期一
+;; Last Updated: Joseph 2011-11-21 20:54:29 星期一
 ;; Version: 0.1.3
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -196,9 +196,10 @@ generate a new TAGS file in directory"
                               (expand-file-name
                                "TAGS" (read-directory-name "Generate new TAGS to:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
-                   (> (- (time-to-seconds (current-time))
-                         ctags-update-last-update-time)
-                      ctags-update-delay-seconds)
+                   (or (interactive-p)
+                       (> (- (time-to-seconds (current-time))
+                             ctags-update-last-update-time)
+                          ctags-update-delay-seconds))
                    (setq tags-file-name (ctags-update-find-tags-file))
                    (not (string-equal (ctags-update-file-truename tags-file-name)
                                       (ctags-update-file-truename (buffer-file-name))))))
@@ -214,6 +215,7 @@ generate a new TAGS file in directory"
                                 (kill-buffer " *update TAGS*")
                                 (message "TAGS in parent directory is updated. "  )
                                 ))))))
+
 ;;;###autoload
 (define-minor-mode ctags-update-minor-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
