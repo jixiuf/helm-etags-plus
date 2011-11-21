@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 17:11:34 星期一
+;; Last Updated: Joseph 2011-11-21 17:57:42 星期一
 ;; Version: 0.1.2
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -142,13 +142,19 @@ ctags-update will be called"
   "`tagfile-full-path' is the full path of TAGS file . when files in or under the same directory
 with `tagfile-full-path' changed ,then TAGS file need to be updated. this function will generate
 the command to update TAGS"
-  (let ((args (apply 'list
-                     "-f"
-                     (get-system-file-path (or save-tagfile-to-as tagfile-full-path))
-                     "-e"
-                     "-R"
-                     ctags-update-other-options
-                     )))
+  ;; on windows "ctags -R d:/.emacs.d"  works , but "ctags -R d:/.emacs.d/" doesn't
+  (let*( (tagdir-with-slash-appended (expand-file-name (file-name-directory tagfile-full-path)))
+         (length-of-tagfile-directory (length tagdir-with-slash-appended))
+         (tagdir-without-slash-appended (substring tagdir-with-slash-appended 0 (1- length-of-tagfile-directory)))
+         (args
+          (append
+           (list "-f")
+           (list (get-system-file-path (or save-tagfile-to-as tagfile-full-path)))
+           (list "-e")
+           ctags-update-other-options
+           (list "-R")
+           (list tagdir-without-slash-appended)
+           )))
     args))
 
 
@@ -197,7 +203,6 @@ generate a new TAGS file in directory"
                    (not (string-equal (ctags-update-file-truename tags-file-name)
                                       (ctags-update-file-truename (buffer-file-name))))))
       (setq ctags-update-last-update-time (time-to-seconds (current-time)));;update time
-      (cd (file-name-directory tags-file-name))
       (setq process
             (apply 'start-process ;;
                    "update TAGS" " *update TAGS*"
@@ -209,7 +214,6 @@ generate a new TAGS file in directory"
                                 (kill-buffer " *update TAGS*")
                                 (message "TAGS in parent directory is updated. "  )
                                 ))))))
-
 ;;;###autoload
 (define-minor-mode ctags-update-minor-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
