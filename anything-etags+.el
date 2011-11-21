@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-21 13:52:13 星期一
+;; Last Updated: Joseph 2011-11-21 14:15:38 星期一
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -486,7 +486,7 @@ needn't search tag file again."
               first-part-of-anything-pattern tag-table-buffer))))
     candidates))
 
-(defun ANYTHING-etags+-get-candidates-from-tag-file (tagname tag-table-buffer)
+(defun anything-etags+-get-candidates-from-tag-file (tagname tag-table-buffer)
   "find tagname in tag-table-buffer. "
   (catch 'failed
     (let ((case-fold-search (anything-etags+-case-fold-search))
@@ -494,9 +494,9 @@ needn't search tag file again."
           tag-regex
           tagname-regexp-quoted
           candidates)
-      (if (string-match "\\\\_<\\|\\\\_>" tagname)
+      (if (string-match "\\\\_<\\|\\\\_>[ \t]*" tagname)
           (progn
-            (setq tagname (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  tagname))
+            (setq tagname (replace-regexp-in-string "\\\\_<\\|\\\\_>[ \t]*" ""  tagname))
             (setq tagname-regexp-quoted (regexp-quote tagname))
             (setq tag-regex (concat "^.*?\\(" "\^?\\(.+[:.']"  tagname-regexp-quoted "\\)\^A"
                                     "\\|" "\^?"  tagname-regexp-quoted "\^A"
@@ -637,7 +637,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
     (volatile);;candidates
     (pattern-transformer (lambda (anything-pattern)
                            (setq anything-etags+-untransformed-anything-pattern anything-pattern)
-                           (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  anything-pattern))))
+                           (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>[ \t]*" ""  anything-pattern))))
     (requires-pattern  . 3);;need at least 3 char
     (delayed);; (setq anything-idle-delay-4-anthing-etags+ 1)
     (action ("Goto the location" . anything-c-etags+-goto-location))))
@@ -798,5 +798,4 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
               ""  nil nil "\t")))
 
 (provide 'anything-etags+)
-
 ;;;anything-etags+.el ends here.
