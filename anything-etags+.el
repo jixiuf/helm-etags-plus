@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-23 00:38:19 星期三
+;; Last Updated: Joseph 2011-11-23 01:11:50 星期三
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -151,6 +151,9 @@
 ;;  `anything-etags+-use-short-file-name'
 ;;    Use short source file name as each candidate's display.
 ;;    default = t
+;;  `anything-etags+-filename-location'
+;;    this var only work when `anything-etags+-use-short-file-name' is nil.
+;;    default = (quote last)
 ;;  `anything-etags+-highlight-tag-after-jump'
 ;;    *If non-nil, temporarily highlight the tag
 ;;    default = t
@@ -180,6 +183,11 @@
   "Use short source file name as each candidate's display.
  search '(DISPLAY . REAL)' in anything.el for more info."
   :type 'boolean
+  :group 'anything-etags+)
+
+(defcustom anything-etags+-filename-location 'last
+  "this var only work when `anything-etags+-use-short-file-name' is nil."
+  :type '(choice (const first) (const last))
   :group 'anything-etags+)
 
 (defcustom anything-etags+-highlight-tag-after-jump t
@@ -529,7 +537,10 @@ needn't search tag file again."
                 (let ((tag-table-parent (anything-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
                       (src-file-parent (file-name-directory src-file-name)))
                   (when (string-match  (regexp-quote tag-table-parent) src-file-name)
-                    (setq src-location-display (concat "[" src-location-display "]:"  (substring src-file-parent (length  tag-table-parent)))))))
+                    (if (equal 'last anything-etags+-filename-location)
+                        (setq src-location-display (substring src-file-name (length  tag-table-parent)))
+                      (setq src-location-display (concat src-location-display " "  (substring src-file-parent (length  tag-table-parent))))
+                      ))))
               (setq display (concat tag-line
                                     (or (ignore-errors
                                           (make-string (- (window-width)
