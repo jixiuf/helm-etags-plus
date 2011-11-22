@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-22 23:34:53 星期二
+;; Last Updated: Joseph 2011-11-22 23:52:59 星期二
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -534,7 +534,7 @@ needn't search tag file again."
                                           (make-string (- (window-width)
                                                           (string-width tag-line)
                                                           (string-width src-file-name))
-                                                       ? )) "")
+                                                       ? )) "")
                                     src-file-name))
               (add-to-list 'candidates (cons display real)))))
         (modify-syntax-entry ?_ "_"))
