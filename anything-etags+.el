@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-22 23:52:59 星期二
+;; Last Updated: Joseph 2011-11-23 00:38:19 星期三
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -522,20 +522,21 @@ needn't search tag file again."
             (setq tag-line (replace-regexp-in-string  "\t" (make-string tab-width ? ) tag-line))
             (end-of-line)
             ;;(setq src-file-name (etags-file-of-tag))
-            (setq src-file-name (anything-etags+-file-of-tag))
-            (let ((display)(real (list  src-file-name tag-info full-tagname)))
-              (let ((tag-table-parent (anything-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer)))))
-                (when (string-match  tag-table-parent (anything-etags+-file-truename src-file-name))
-                  (setq src-file-name (substring src-file-name (length  tag-table-parent)))))
-              (if anything-etags+-use-short-file-name
-                  (setq src-file-name (file-name-nondirectory src-file-name)))
+            (setq src-file-name   (anything-etags+-file-truename (anything-etags+-file-of-tag)))
+            (let ((display)(real (list  src-file-name tag-info full-tagname))
+                  (src-location-display  (file-name-nondirectory src-file-name)))
+              (unless anything-etags+-use-short-file-name
+                (let ((tag-table-parent (anything-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
+                      (src-file-parent (file-name-directory src-file-name)))
+                  (when (string-match  (regexp-quote tag-table-parent) src-file-name)
+                    (setq src-location-display (concat "[" src-location-display "]:"  (substring src-file-parent (length  tag-table-parent)))))))
               (setq display (concat tag-line
                                     (or (ignore-errors
                                           (make-string (- (window-width)
                                                           (string-width tag-line)
-                                                          (string-width src-file-name))
+                                                          (string-width  src-location-display))
                                                        ? )) "")
-                                    src-file-name))
+                                    src-location-display))
               (add-to-list 'candidates (cons display real)))))
         (modify-syntax-entry ?_ "_"))
       candidates)))
