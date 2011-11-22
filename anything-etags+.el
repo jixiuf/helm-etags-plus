@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-23 01:11:50 星期三
+;; Last Updated: Joseph 2011-11-23 01:13:32 星期三
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -694,11 +694,11 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
           ;;this one will be preselected
           (setq line-text (concat line-text "\t")))
       (setq empty-string  (or (ignore-errors
-                                (make-string (- (window-width)  6
+                                (make-string (- (window-width)
                                                 (string-width  line-num)
                                                 (string-width file-name)
                                                 (string-width line-text))
-                                             ? )) "  "))
+                                             ? )) " "))
       (setq display (concat line-text empty-string
                             file-name ":[" line-num "]"))
       (setq candidate  (cons display marker)))))
