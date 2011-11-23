@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-21 21:01:09 星期一
+;; Last Updated: Joseph 2011-11-23 17:12:33 星期三
 ;; Version: 0.1.3
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -116,7 +116,7 @@ ctags-update will be called"
   :type 'string)
 
 (defvar ctags-update-last-update-time
-  (- (time-to-seconds (current-time)) ctags-update-delay-seconds 1)
+  (- (float-time (current-time)) ctags-update-delay-seconds 1)
   "make sure when user first call `ctags-update' it can run immediately "
   )
 
@@ -194,14 +194,14 @@ generate a new TAGS file in directory"
                               (expand-file-name
                                "TAGS" (read-directory-name "Generate new TAGS to:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
-                   (or (interactive-p)
-                       (> (- (time-to-seconds (current-time))
+                   (or (called-interactively-p '(interactive))
+                       (> (- (float-time (current-time))
                              ctags-update-last-update-time)
                           ctags-update-delay-seconds))
                    (setq tags-file-name (ctags-update-find-tags-file))
                    (not (string-equal (ctags-update-file-truename tags-file-name)
                                       (ctags-update-file-truename (buffer-file-name))))))
-      (setq ctags-update-last-update-time (time-to-seconds (current-time)));;update time
+      (setq ctags-update-last-update-time (float-time (current-time)));;update time
       (setq process
             (apply 'start-process ;;
                    "update TAGS" " *update TAGS*"
