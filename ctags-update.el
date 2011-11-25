@@ -2,7 +2,7 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2011-11-23 17:12:33 星期三
+;; Last Updated: Joseph 2011-11-25 10:51:48 星期五
 ;; Version: 0.1.3
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Maintainer:  纪秀峰  jixiuf@gmail.com
@@ -171,16 +171,13 @@ not visiting a file"
   (progn
     (defun find-tags-file-r (path)
       "find the tags file from the parent directories"
-      (let* ((parent (file-name-directory path))
-             (possible-tags-file (concat parent "TAGS")))
+      (let* ((possible-tags-file (concat path "TAGS")))
         (cond
          ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
          ((string-match "^/TAGS\\|^[a-zA-Z]:/TAGS" possible-tags-file) nil)
-         (t (find-tags-file-r (directory-file-name parent))))))
-    (if (buffer-file-name)
-        (catch 'found-it
-          (find-tags-file-r (buffer-file-name)))
-      (message "buffer is not visiting a file") nil)))
+         (t (find-tags-file-r (directory-file-name path))))))
+    (catch 'found-it
+      (find-tags-file-r default-directory))))
 
 ;;;###autoload
 (defun ctags-update(&optional args)
@@ -194,13 +191,15 @@ generate a new TAGS file in directory"
                               (expand-file-name
                                "TAGS" (read-directory-name "Generate new TAGS to:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
-                   (or (called-interactively-p '(interactive))
+                   (or (called-interactively-p 'interactive)
                        (> (- (float-time (current-time))
                              ctags-update-last-update-time)
                           ctags-update-delay-seconds))
                    (setq tags-file-name (ctags-update-find-tags-file))
-                   (not (string-equal (ctags-update-file-truename tags-file-name)
-                                      (ctags-update-file-truename (buffer-file-name))))))
+                   (not (and (buffer-file-name)
+                             (string-equal (ctags-update-file-truename tags-file-name)
+                                           (ctags-update-file-truename (buffer-file-name)))
+                             ))))
       (setq ctags-update-last-update-time (float-time (current-time)));;update time
       (setq process
             (apply 'start-process ;;
