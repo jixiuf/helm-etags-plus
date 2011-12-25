@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-11-23 01:18:42 星期三
+;; Last Updated: Joseph 2011-12-25 20:00:38 星期日
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -409,19 +409,10 @@ hits the start of file."
   "recursively searches each parent directory for a file named 'TAGS' and returns the
 path to that file or nil if a tags file is not found. Returns nil if the buffer is
 not visiting a file"
-  (progn
-    (defun find-tags-file-r (path)
-      "find the tags file from the parent directories"
-      (let* ((parent (file-name-directory path))
-             (possible-tags-file (concat parent "TAGS")))
-        (cond
-         ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
-         ((string-match "^/TAGS\\|^[a-zA-Z]:/TAGS" possible-tags-file) nil)
-         (t (find-tags-file-r (directory-file-name parent))))))
-    (if (buffer-file-name)
-        (catch 'found-it
-          (find-tags-file-r (buffer-file-name)))
-      (message "buffer is not visiting a file") nil)))
+(let ((tag-root-dir (locate-dominating-file default-directory "TAGS")))
+    (if tag-root-dir
+        (expand-file-name "TAGS" tag-root-dir)
+      nil)))
 
 (defun anything-etags+-get-tag-files()
   "Get tag files."
