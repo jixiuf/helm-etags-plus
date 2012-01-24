@@ -3,7 +3,7 @@
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2011-12-25 20:00:38 星期日
+;; Last Updated: Joseph 2012-01-24 19:21:08 星期二
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -257,10 +257,10 @@ will set this variable.")
 
 (defvar anything-etags+-previous-matched-pattern nil
   "work with `anything-etags+-candidates-cache'.
-  the value is (car (amp-mp-make-regexps anything-pattern))
+  the value is (car (anything-mp-make-regexps anything-pattern))
 :the first part of `anything-pattern', the matched
  candidates is saved in `anything-etags+-candidates-cache'. when current
-'(car (amp-mp-make-regexps anything-pattern))' is equals to this value
+'(car (anything-mp-make-regexps anything-pattern))' is equals to this value
 then the cached candidates can be reused ,needn't find from the tag file.")
 
 (defvar anything-etags+-candidates-cache nil
@@ -466,8 +466,8 @@ needn't search tag file again."
   (let ((pattern anything-etags+-untransformed-anything-pattern));;default use whole anything-pattern to search in tag files
     ;; first collect candidates using first part of anything-pattern
     (when (featurep 'anything-match-plugin)
-      ;;for example  (amp-mp-make-regexps "boo far") -->("boo" "far")
-      (setq pattern (car (amp-mp-make-regexps anything-etags+-untransformed-anything-pattern))))
+      ;;for example  (anything-mp-make-regexps "boo far") -->("boo" "far")
+      (setq pattern (car (anything-mp-make-regexps anything-etags+-untransformed-anything-pattern))))
     (unless (string-equal anything-etags+-previous-matched-pattern pattern)
       ;;          (setq candidates anything-etags+-candidates-cache)
       (setq anything-etags+-candidates-cache (anything-etags+-get-candidates-from-all-tag-file pattern))
