@@ -1,4 +1,4 @@
-;;; anything-etags+.el ---Another Etags anything.el interface
+;;; anything-etags+.el --- Another Etags anything.el interface
 
 ;; Description: Another Etags anything.el interface
 ;; Filename: anything-etags+.el
