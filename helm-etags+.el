@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-03-16 17:37:37 星期五
+;; Last Updated: Joseph 2012-03-16 17:40:29 星期五
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -58,9 +58,6 @@
 ;;  (global-set-key "\M-." 'helm-etags+-select-one-key)
 ;;       `M-.' call  helm-etags+-select-at-point
 ;;       `C-uM-.' call helm-etags+-select
-;;   or
-;; (define-key helm-command-map (kbd "e") 'helm-etags+-select-at-point)
-;; (define-key helm-command-map (kbd "C-e") 'helm-etags+-select)
 ;;
 ;; helm-etags+.el also support history go back ,go forward and list tag
 ;; histories you have visited.(must use commands list here:)
