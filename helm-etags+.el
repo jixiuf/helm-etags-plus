@@ -1,11 +1,11 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-03-16 17:35:30 星期五
-;; Version: 0.1.4
+;; Last Updated: Joseph 2012-03-16 17:37:37 星期五
+;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
-;; URL:       https://github.com/jixiuf/helm-etags-plus
+;; URL       :https://github.com/jixiuf/helm-etags-plus
 ;; screencast:http://screencast-repos.googlecode.com/files/emacs-anything-etags-puls.mp4.bz2
 ;; Keywords: helm, etags
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
