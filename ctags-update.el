@@ -1,15 +1,15 @@
 ;;; ctags-update.el --- auto update TAGS in parent directory using exuberant-ctags
 
-;; Description: auto update TAGS using exuberant-ctags
+;; Description: auto or not auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-03-16 20:50:16 星期五
-;; Version: 0.1.3
-;; Author: 纪秀峰  jixiuf@gmail.com
+;; Last Updated: Joseph 2012-03-16 20:52:52 星期五
+;; Version: 0.1.4
+;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
 ;; URL: https://github.com/jixiuf/anything-etags-plus
 ;;      https://github.com/emacsmirror/ctags-update
 
-;; Copyright (C) 2011, 纪秀峰, all rights reserved.
+;; Copyright (C) 2011,2012 Joseph(纪秀峰) all rights reserved.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,6 +34,22 @@
 ;;
 ;; (require 'ctags-update)
 ;; (ctags-update-minor-mode 1)
+;;
+;; then when you save a file ,`ctags-update' will recursively searches each
+;; parent directory for a file named 'TAGS'. if found ,it will use
+;; `exuberant-ctags' update TAGS.
+;;
+;; if you want to update TAGS only when you want.
+;; you can
+;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
+;; and
+;;     M-x : ctags-update
+;; with prefix `C-u' ,then you can generate a new TAGS file in your
+;; selected directory.
+;;
+;; on windows ,you can custom `ctags-update-command' like this:
+;; (when (equal system-type 'windows-nt)
+;;   (setq ctags-update-command (expand-file-name  "~/.emacs.d/bin/ctags.exe")))
 
 ;;; Commands:
 ;;
@@ -57,22 +73,6 @@
 ;;  `ctags-update-other-options'
 ;;    other options for ctags
 ;;    default = (list "--exclude='*.elc'" "--exclude='*.class'" "--exclude='.git'" "--exclude='.svn'" ...)
-
-;; then when you save a file ,`ctags-update' will recursively searches each
-;; parent directory for a file named 'TAGS'. if found ,it will use
-;; `exuberant-ctags' update TAGS.
-;;
-;; if you want to update TAGS only when you want.
-;; you can
-;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
-;; and
-;;     M-x : ctags-update
-;; with prefix `C-u' ,then you can generate a new TAGS file in your
-;; selected directory.
-
-;; on windows ,you can custom `ctags-update-command' like this:
-;; (when (equal system-type 'windows-nt)
-;;   (setq ctags-update-command (expand-file-name  "~/.emacs.d/bin/ctags.exe")))
 
 
 ;;; Code:
