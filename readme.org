@@ -1,12 +1,15 @@
+* helm-etags+.el
+  This package use `helm' as a interface to find tag with Etags.
+  it support multiple tag files.
+  (setq tags-table-list '("/path/of/TAGS1"    "/path/of/TAG2"))
+  and it can searches parent directory recursively for a file named
+  'TAGS'. so you needn't add this special file to `tags-table-list'
+
+* ctags-update.el
+    auto or not auto update TAGS using exuberant-ctags
+
+* anything and helm
 anything.el has been renamed to helm.el . The new project is hosted under
 GitHub? - https://github.com/emacs-helm/helm.
 so I will rename anything-etag-plus to helm-etag-plus,and new repos
 will be https://github.com/jixiuf/helm-etag-plus
-
-This package use `helm' as a interface to find tag with Etags.
-
-it support multiple tag files.
-    (setq tags-table-list '("/path/of/TAGS1"    "/path/of/TAG2"))
-
-and it can searches parent directory recursively for a file named
-'TAGS'. so you needn't add this special file to `tags-table-list'
