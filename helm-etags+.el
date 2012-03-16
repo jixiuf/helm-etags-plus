@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-03-16 17:40:29 星期五
+;; Last Updated: Joseph 2012-03-16 19:27:45 星期五
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -127,9 +127,9 @@
 ;;  `helm-etags+-select-one-key'
 ;;    you can bind this to `M-.'
 ;;  `helm-etags+-history-go-back'
-;;    Go Back. 
+;;    Go Back.
 ;;  `helm-etags+-history-go-forward'
-;;    Go Forward. 
+;;    Go Forward.
 ;;  `helm-etags+-history'
 ;;    show all tag historys using `helm'
 ;;
@@ -721,7 +721,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
 
 ;;;###autoload
 (defun helm-etags+-history-go-back()
-  "Go Back. "
+  "Go Back."
   (interactive)
   (helm-etags+-history-init)
   (when (and
@@ -733,7 +733,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
 
 ;;;###autoload
 (defun helm-etags+-history-go-forward()
-  "Go Forward. "
+  "Go Forward."
   (interactive)
   (helm-etags+-history-init)
   (when (and
