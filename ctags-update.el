@@ -2,12 +2,11 @@
 
 ;; Description: auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-02-04 11:59:42 星期六
+;; Last Updated: Joseph 2012-03-16 20:50:04 星期五
 ;; Version: 0.1.3
 ;; Author: 纪秀峰  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
-;; URL: http://www.emacswiki.org/emacs/ctags-update.el
-;;      https://github.com/jixiuf/anything-etags-plus
+f;; URL: https://github.com/jixiuf/anything-etags-plus
 ;;      https://github.com/emacsmirror/ctags-update
 
 ;; Copyright (C) 2011, 纪秀峰, all rights reserved.
@@ -52,29 +51,6 @@
 ;; (when (equal system-type 'windows-nt)
 ;;   (setq ctags-update-command (expand-file-name  "~/.emacs.d/bin/ctags.exe")))
 
-
-;;; Commands:
-;;
-;; Below are complete command list:
-;;
-;;  `ctags-update'
-;;    update TAGS in parent directory using `exuberant-ctags' you
-;;  `ctags-update-minor-mode'
-;;    auto update TAGS using `exuberant-ctags' in parent directory.
-;;
-;;; Customizable Options:
-;;
-;; Below are customizable option list:
-;;
-;;  `ctags-update-command'
-;;    now it only support `exuberant-ctags'
-;;    default = "ctags"
-;;  `ctags-update-delay-seconds'
-;;    seconds between each `ctags-update'.
-;;    default = (* 5 60)
-;;  `ctags-update-other-options'
-;;    other options for ctags
-;;    default = (list "--exclude='*.elc'" "--exclude='*.class'" "--exclude='.git'" "--exclude='.svn'" ...)
 
 ;;; Code:
 
