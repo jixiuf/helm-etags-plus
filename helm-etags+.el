@@ -1,20 +1,16 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
-;; Description: Another Etags helm.el interface
-;; Filename: helm-etags+.el
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-03-16 00:18:15 星期五
+;; Last Updated: Joseph 2012-03-16 17:35:30 星期五
 ;; Version: 0.1.4
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
-;; URL:http://www.emacswiki.org/emacs/helm-etags+.el
-;;     https://github.com/jixiuf/helm-etags-plus
+;; URL:       https://github.com/jixiuf/helm-etags-plus
 ;; screencast:http://screencast-repos.googlecode.com/files/emacs-anything-etags-puls.mp4.bz2
 ;; Keywords: helm, etags
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
 ;;   I am trying to make it work with XEmacs ,
 ;;   but I haven't tested it on XEmacs.
-;;  .
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -49,9 +45,7 @@
 ;;  'TAGS'. so you needn't add this special file to `tags-table-list'
 ;;
 ;;  if you use GNU/Emacs ,you can set `tags-table-list' like this.
-;;  (setq tags-table-list '("/java/tags/TAGS"
-;;                          "/java/tags/linux.tag"
-;;                          "/java/tags/tag3"))
+;;  (setq tags-table-list '("/path/of/TAGS1" "/path/of/TAG2"))
 ;;
 ;;  if you use XEmacs ,you can set `tag-table-alist' like this.
 ;;  (setq tag-table-alist
@@ -90,7 +84,6 @@
 ;;
 ;;; Installation:
 ;;
-;; Don't need helm-etags.el (another etags interface).
 ;; Just put helm-etags+.el to your load-path.
 ;; The load-path is usually ~/elisp/.
 ;; It's set in your ~/.emacs like this:
