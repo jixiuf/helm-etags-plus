@@ -2,11 +2,11 @@
 
 ;; Description: auto or not auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-03-16 20:52:52 星期五
+;; Last Updated: Joseph 2012-06-30 00:27:51 星期六
 ;; Version: 0.1.4
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
-;; URL: https://github.com/jixiuf/anything-etags-plus
+;; URL: https://github.com/jixiuf/helm-etags-plus
 ;;      https://github.com/emacsmirror/ctags-update
 
 ;; Copyright (C) 2011,2012 Joseph(纪秀峰) all rights reserved.
