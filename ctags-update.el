@@ -113,6 +113,12 @@ ctags-update will be called"
   :group 'ctags-update
   :type 'string)
 
+(defcustom ctags-update-lighter " ctagsU"
+  "Lighter displayed in mode line when `ctags-update-minor-mode'
+is enabled."
+  :group 'ctags-update
+  :type 'string)
+
 (defvar ctags-update-last-update-time
   (- (float-time (current-time)) ctags-update-delay-seconds 1)
   "make sure when user first call `ctags-update' it can run immediately "
@@ -208,7 +214,7 @@ generate a new TAGS file in directory"
 ;;;###autoload
 (define-minor-mode ctags-update-minor-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
-  :lighter " ctagsU"
+  :lighter ctags-update-lighter
   :keymap ctags-update-minor-mode-map
   :group 'etags
   (if ctags-update-minor-mode
