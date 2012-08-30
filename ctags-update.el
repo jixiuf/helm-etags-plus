@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-08-30 22:49:16 星期四
+;; Last Updated: Joseph 2012-08-30 23:08:04 星期四
 ;; Version: 0.1.5
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -58,7 +58,7 @@
 ;;
 ;;  `ctags-update'
 ;;    update TAGS in parent directory using `exuberant-ctags' you
-;;  `ctags-update-minor-mode'
+;;  `ctags-auto-update-mode'
 ;;    auto update TAGS using `exuberant-ctags' in parent directory.
 ;;
 ;;; Customizable Options:
@@ -123,11 +123,11 @@ is enabled."
   (- (float-time (current-time)) ctags-update-delay-seconds 1)
   "make sure when user first call `ctags-update' it can run immediately")
 
-(defvar ctags-update-minor-mode-map
+(defvar ctags-auto-update-mode-map
   (let ((map (make-sparse-keymap)))
     map))
 
-(defvar  ctags-update-minor-mode-hook nil)
+(defvar  ctags-auto-update-mode-hook nil)
 
 (defvar ctags-update-use-xemacs-etags-p
   (fboundp 'get-tag-table-buffer)
@@ -180,7 +180,7 @@ not visiting a file"
 (defun ctags-update(&optional args)
   "update TAGS in parent directory using `exuberant-ctags' you
 can call this function directly , or enable
-`ctags-update-minor-mode' or with prefix `C-u' then you can
+`ctags-auto-update-mode' or with prefix `C-u' then you can
 generate a new TAGS file in directory"
   (interactive "P")
   (let (tags-file-name process)
@@ -209,24 +209,19 @@ generate a new TAGS file in directory"
                                 (kill-buffer " *update TAGS*")
                                 (message "TAGS in parent directory is updated. "  )
                                 ))))))
-
-(define-minor-mode ctags-update-minor-mode
+;;;###autoload
+(define-minor-mode ctags-auto-update-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
   :lighter ctags-update-lighter
-  :keymap ctags-update-minor-mode-map
+  :keymap ctags-auto-update-mode-map
+  :global t
+  :init-value t
   :group 'etags
-  (if ctags-update-minor-mode
+  (if ctags-auto-update-mode
       (progn
         (add-hook 'after-save-hook 'ctags-update)
-        (run-hooks 'ctags-update-minor-mode-hook))
+        (run-hooks 'ctags-auto-update-mode-hook))
     (remove-hook 'after-save-hook 'ctags-update)))
-
-;;;###autoload
-(define-global-minor-mode ctags-auto-update-mode
-  ctags-update-minor-mode
-  ctags-update-minor-mode
-  :lighter ctags-update-lighter
-  :init-value t)
 
 (provide 'ctags-update)
 
