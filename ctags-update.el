@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-08-30 23:08:04 星期四
+;; Last Updated: Joseph 2012-08-30 23:11:32 星期四
 ;; Version: 0.1.5
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -216,7 +216,7 @@ generate a new TAGS file in directory"
   :keymap ctags-auto-update-mode-map
   :global t
   :init-value t
-  :group 'etags
+  :group 'ctags-update
   (if ctags-auto-update-mode
       (progn
         (add-hook 'after-save-hook 'ctags-update)
