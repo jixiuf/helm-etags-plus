@@ -1,8 +1,7 @@
-;;; ctags-update.el --- auto update TAGS in parent directory using exuberant-ctags
+;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
-;; Description: auto or not auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-08-30 22:19:10 星期四
+;; Last Updated: Joseph 2012-08-30 22:49:16 星期四
 ;; Version: 0.1.5
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -25,6 +24,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
 ;; Just put ctags-update.el to your load-path.
 ;; The load-path is usually ~/elisp/.
 ;; It's set in your ~/.emacs like this:
@@ -33,11 +33,12 @@
 ;; And the following to your ~/.emacs startup file.
 ;;
 ;; (require 'ctags-update)
-;; (ctags-update-minor-mode 1)
+;; (ctags-auto-update-mode 1)
 ;;
-;; then when you save a file ,`ctags-update' will recursively searches each
+;; then when you save a file ,`ctags-auto-update-mode' will recursively searches each
 ;; parent directory for a file named 'TAGS'. if found ,it will use
-;; `exuberant-ctags' update TAGS.
+;; `exuberant-ctags' update TAGS,
+;; it would not be updated if last time calling `ctags-update' is not 5 minute age(default).
 ;;
 ;; if you want to update TAGS only when you want.
 ;; you can
@@ -74,7 +75,7 @@
 ;;    other options for ctags
 ;;    default = (list "--exclude='*.elc'" "--exclude='*.class'" "--exclude='.git'" "--exclude='.svn'" ...)
 ;;  `ctags-update-lighter'
-;;    Lighter displayed in mode line when `ctags-update-minor-mode'
+;;    Lighter displayed in mode line when `ctags-auto-update-mode'
 ;;    default = " ctagsU"
 
 ;;; Code:
@@ -113,7 +114,7 @@ then `ctags-update' will be called"
   :type 'string)
 
 (defcustom ctags-update-lighter " ctagsU"
-  "Lighter displayed in mode line when `ctags-update-minor-mode'
+  "Lighter displayed in mode line when `ctags-auto-update-mode'
 is enabled."
   :group 'ctags-update
   :type 'string)
@@ -209,7 +210,6 @@ generate a new TAGS file in directory"
                                 (message "TAGS in parent directory is updated. "  )
                                 ))))))
 
-;;;###autoload
 (define-minor-mode ctags-update-minor-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
   :lighter ctags-update-lighter
@@ -218,15 +218,22 @@ generate a new TAGS file in directory"
   (if ctags-update-minor-mode
       (progn
         (add-hook 'after-save-hook 'ctags-update)
-        (run-hooks 'ctags-update-minor-mode-hook)
-        )
-    (remove-hook 'after-save-hook 'ctags-update)
-    )
-  )
+        (run-hooks 'ctags-update-minor-mode-hook))
+    (remove-hook 'after-save-hook 'ctags-update)))
+
+;;;###autoload
+(define-global-minor-mode ctags-auto-update-mode
+  ctags-update-minor-mode
+  ctags-update-minor-mode
+  :lighter ctags-update-lighter
+  :init-value t)
+
 (provide 'ctags-update)
 
 ;; Local Variables:
 ;; coding: utf-8
+;; indent-tabs-mode: nil
+;; tab-width: 4
 ;; End:
 
 ;;; ctags-update.el ends here
