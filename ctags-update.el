@@ -2,8 +2,8 @@
 
 ;; Description: auto or not auto update TAGS using exuberant-ctags
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-06-30 00:27:51 星期六
-;; Version: 0.1.4
+;; Last Updated: Joseph 2012-08-30 22:19:10 星期四
+;; Version: 0.1.5
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
 ;; URL: https://github.com/jixiuf/helm-etags-plus
@@ -65,15 +65,17 @@
 ;; Below are customizable option list:
 ;;
 ;;  `ctags-update-command'
-;;    now it only support `exuberant-ctags'
+;;    it only support `exuberant-ctags'
 ;;    default = "ctags"
 ;;  `ctags-update-delay-seconds'
-;;    seconds between each `ctags-update'.
+;;    in `after-save-hook' current-time - last-time must bigger than this value,
 ;;    default = (* 5 60)
 ;;  `ctags-update-other-options'
 ;;    other options for ctags
 ;;    default = (list "--exclude='*.elc'" "--exclude='*.class'" "--exclude='.git'" "--exclude='.svn'" ...)
-
+;;  `ctags-update-lighter'
+;;    Lighter displayed in mode line when `ctags-update-minor-mode'
+;;    default = " ctagsU"
 
 ;;; Code:
 
@@ -83,18 +85,16 @@
   :group 'etags)
 
 (defcustom ctags-update-command "ctags"
-  "now it only support `exuberant-ctags'
-take care it is not the ctags in `emacs-23.3/bin/'
+  "it only support `exuberant-ctags'
+take care it is not the ctags in `emacs-VERSION/bin/'
 you should download `exuberant-ctags' and make sure
-the ctags is under $PATH before `emacs-23.3/bin/'"
+the ctags is under $PATH before `emacs-VERSION/bin/'"
   :type 'string
-  :group 'ctags-update
-  )
+  :group 'ctags-update)
 
 (defcustom ctags-update-delay-seconds  (* 5 60) ; 5 mins
-  "seconds between each `ctags-update'.
-current-time - last-time must bigger than this value ,then
-ctags-update will be called"
+"in `after-save-hook' current-time - last-time must bigger than this value,
+then `ctags-update' will be called"
   :type 'integer
   :group 'ctags-update)
 
@@ -107,8 +107,7 @@ ctags-update will be called"
    "--exclude='SCCS'"
    "--exclude='RCS'"
    "--exclude='CVS'"
-   "--exclude='EIFGEN'"
-   )
+   "--exclude='EIFGEN'")
   "other options for ctags"
   :group 'ctags-update
   :type 'string)
@@ -121,8 +120,7 @@ is enabled."
 
 (defvar ctags-update-last-update-time
   (- (float-time (current-time)) ctags-update-delay-seconds 1)
-  "make sure when user first call `ctags-update' it can run immediately "
-  )
+  "make sure when user first call `ctags-update' it can run immediately")
 
 (defvar ctags-update-minor-mode-map
   (let ((map (make-sparse-keymap)))
