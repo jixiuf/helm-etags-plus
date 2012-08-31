@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-08-30 23:11:32 星期四
+;; Last Updated: Joseph 2012-08-31 22:22:31 星期五
 ;; Version: 0.1.5
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -111,7 +111,7 @@ then `ctags-update' will be called"
    "--exclude='EIFGEN'")
   "other options for ctags"
   :group 'ctags-update
-  :type 'string)
+  :type '(repeat string))
 
 (defcustom ctags-update-lighter " ctagsU"
   "Lighter displayed in mode line when `ctags-auto-update-mode'
