@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-08 23:27:43 星期六
+;; Last Updated: Joseph 2012-09-08 23:30:46 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -166,7 +166,7 @@
 (defgroup helm-etags+ nil
   "Another Etags helm.el interface."
   :prefix "helm-etags+-"
-  :group 'convenience)
+  :group 'etags)
 
 (defcustom helm-etags+-use-short-file-name t
   "Use short source file name as each candidate's display.
