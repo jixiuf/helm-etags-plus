@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-08 23:30:46 星期六
+;; Last Updated: Joseph 2012-09-08 23:33:36 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -183,20 +183,20 @@
   "*If non-nil, temporarily highlight the tag
   after you jump to it.
   (borrowed from etags-select.el)"
-  :group 'helm-etags+-
+  :group 'helm-etags+
   :type 'boolean)
 
 (defcustom helm-etags+-highlight-delay 0.2
   "*How long to highlight the tag.
   (borrowed from etags-select.el)"
-  :group 'helm-etags+-
+  :group 'helm-etags+
   :type 'number)
 
 (defface helm-etags+-highlight-tag-face
   '((t (:foreground "white" :background "cadetblue4" :bold t)))
   "Font Lock mode face used to highlight tags.
   (borrowed from etags-select.el)"
-  :group 'helm-etags+-)
+  :group 'helm-etags+)
 
 (defun helm-etags+-highlight (beg end)
   "Highlight a region temporarily.
