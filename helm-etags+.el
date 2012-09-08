@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-03-16 19:27:45 星期五
+;; Last Updated: Joseph 2012-09-08 23:27:43 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -38,7 +38,7 @@
 
 ;;; Commentary:
 ;;
-;; This package use `helm' as a interface to find tag with Etags.
+;; This package use `helm' as an interface to find tag with Etags.
 ;;
 ;;  it support multiple tag files.
 ;;  and it can recursively searches each parent directory for a file named
