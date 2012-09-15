@@ -6,7 +6,7 @@
   'TAGS'. so you needn't add this special file to `tags-table-list'
 
 * ctags-update.el
-    auto or not auto update TAGS using exuberant-ctags
+    (auto) update TAGS using exuberant-ctags
 
 * anything and helm
 anything.el has been renamed to helm.el . The new project is hosted under
