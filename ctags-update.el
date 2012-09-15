@@ -215,7 +215,7 @@ generate a new TAGS file in directory"
   :lighter ctags-update-lighter
   :keymap ctags-auto-update-mode-map
   :global t
-  :init-value t
+  :init-value nil
   :group 'ctags-update
   (if ctags-auto-update-mode
       (progn
