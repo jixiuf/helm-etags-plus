@@ -1,8 +1,8 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-08-31 22:22:31 星期五
-;; Version: 0.1.5
+;; Last Updated: Joseph 2012-09-17 01:02:11 星期一
+;; Version: 0.2.0
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
 ;; URL: https://github.com/jixiuf/helm-etags-plus
@@ -32,8 +32,10 @@
 ;;
 ;; And the following to your ~/.emacs startup file.
 ;;
-;; (require 'ctags-update)
-;; (ctags-auto-update-mode 1)
+;;(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
+;;(add-hook 'c-mode-common-hook  'turn-on-ctags-auto-update-mode)
+;; ...
+;;(add-hook 'lisp-mode-hook  'turn-on-ctags-auto-update-mode)
 ;;
 ;; then when you save a file ,`ctags-auto-update-mode' will recursively searches each
 ;; parent directory for a file named 'TAGS'. if found ,it will use
@@ -60,6 +62,8 @@
 ;;    update TAGS in parent directory using `exuberant-ctags' you
 ;;  `ctags-auto-update-mode'
 ;;    auto update TAGS using `exuberant-ctags' in parent directory.
+;;  `turn-on-ctags-auto-update-mode'
+;;    turn on `ctags-auto-update-mode'.
 ;;
 ;;; Customizable Options:
 ;;
@@ -214,14 +218,20 @@ generate a new TAGS file in directory"
   "auto update TAGS using `exuberant-ctags' in parent directory."
   :lighter ctags-update-lighter
   :keymap ctags-auto-update-mode-map
-  :global t
+  ;; :global t
   :init-value nil
   :group 'ctags-update
   (if ctags-auto-update-mode
       (progn
-        (add-hook 'after-save-hook 'ctags-update)
+        (add-hook 'after-save-hook 'ctags-update nil t)
         (run-hooks 'ctags-auto-update-mode-hook))
-    (remove-hook 'after-save-hook 'ctags-update)))
+    (remove-hook 'after-save-hook 'ctags-update t)))
+
+;;;###autoload
+(defun turn-on-ctags-auto-update-mode()
+  "turn on `ctags-auto-update-mode'."
+  (interactive)
+  (ctags-auto-update-mode 1))
 
 (provide 'ctags-update)
 
