@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-09-17 01:02:11 星期一
+;; Last Updated: Joseph 2012-09-19 09:46:32 星期三
 ;; Version: 0.2.0
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -35,7 +35,7 @@
 ;;(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
 ;;(add-hook 'c-mode-common-hook  'turn-on-ctags-auto-update-mode)
 ;; ...
-;;(add-hook 'lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+;;(add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
 ;;
 ;; then when you save a file ,`ctags-auto-update-mode' will recursively searches each
 ;; parent directory for a file named 'TAGS'. if found ,it will use
