@@ -1,8 +1,8 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-09-19 09:46:32 星期三
-;; Version: 0.2.0
+;; Last Updated: Joseph 2012-09-22 11:01:55 星期六
+;; Version: 0.2.1
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
 ;; URL: https://github.com/jixiuf/helm-etags-plus
@@ -156,10 +156,13 @@ the command to update TAGS"
          (tagdir-without-slash-appended (substring tagdir-with-slash-appended 0 (1- length-of-tagfile-directory)))
          (args
           (append
-           (list "-R" "-e" "-f")
-           (list (get-system-file-path (or save-tagfile-to-as tagfile-full-path)))
+           (list "-R" "-e" )
+           (when (equal system-type 'windows-nt)
+             (list "-f" (get-system-file-path (or save-tagfile-to-as tagfile-full-path))))
            ctags-update-other-options
-           (list tagdir-without-slash-appended)
+           (if (equal system-type 'windows-nt)
+               (list tagdir-without-slash-appended)
+             (list "."))
            )))
     args))
 
@@ -202,17 +205,23 @@ generate a new TAGS file in directory"
                                            (ctags-update-file-truename (buffer-file-name)))
                              ))))
       (setq ctags-update-last-update-time (float-time (current-time)));;update time
-      (setq process
-            (apply 'start-process ;;
-                   "update TAGS" " *update TAGS*"
-                   ctags-update-command
-                   (ctags-update-command-args tags-file-name)))
-      (set-process-sentinel process
-                            (lambda (proc change)
-                              (when (string-match "\\(finished\\|exited\\)" change)
-                                (kill-buffer " *update TAGS*")
-                                (message "TAGS in parent directory is updated. "  )
-                                ))))))
+      (let ((orig-default-directory default-directory)
+            (default-directory (file-name-directory tags-file-name)))
+        (when (equal system-type 'windows-nt)
+          (setq default-directory orig-default-directory))
+        (setq process
+              (apply 'start-process ;;
+                     "update TAGS" " *update TAGS*"
+                     ctags-update-command
+                     (ctags-update-command-args tags-file-name)))
+        (set-process-sentinel process
+                              (lambda (proc change)
+                                (when (string-match "\\(finished\\|exited\\)" change)
+                                  (kill-buffer " *update TAGS*")
+                                  (message "TAGS in parent directory is updated. "  )
+                                  ))))
+            )))
+
 ;;;###autoload
 (define-minor-mode ctags-auto-update-mode
   "auto update TAGS using `exuberant-ctags' in parent directory."
