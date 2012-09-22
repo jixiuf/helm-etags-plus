@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-09-22 11:01:55 星期六
+;; Last Updated: Joseph 2012-09-22 12:20:15 星期六
 ;; Version: 0.2.1
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -45,10 +45,10 @@
 ;; if you want to update TAGS only when you want.
 ;; you can
 ;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
-;; and
-;;     M-x : ctags-update
-;; with prefix `C-u' ,then you can generate a new TAGS file in your
-;; selected directory.
+;;     (global-set-key "\C-cE" 'ctags-update)
+;; with prefix `C-u' ,then you can generate a new TAGS file in your selected directory,
+;; with prefix `C-uC-u' same to prefix `C-u',but save it to king-ring instead of execute it."
+
 ;;
 ;; on windows ,you can custom `ctags-update-command' like this:
 ;; (when (equal system-type 'windows-nt)
@@ -59,7 +59,7 @@
 ;; Below are complete command list:
 ;;
 ;;  `ctags-update'
-;;    update TAGS in parent directory using `exuberant-ctags' you
+;;    update TAGS in parent directory using `exuberant-ctags'.
 ;;  `ctags-auto-update-mode'
 ;;    auto update TAGS using `exuberant-ctags' in parent directory.
 ;;  `turn-on-ctags-auto-update-mode'
@@ -165,6 +165,10 @@ the command to update TAGS"
              (list "."))
            )))
     args))
+(defun ctags-update-get-command(command command-args)
+  "get the full command as string."
+  (concat command " "(mapconcat 'identity  command-args " ")))
+
 
 (defun get-system-file-path(file-path)
   "when on windows `expand-file-name' will translate from \\ to /
@@ -185,15 +189,16 @@ not visiting a file"
 
 ;;;###autoload
 (defun ctags-update(&optional args)
-  "update TAGS in parent directory using `exuberant-ctags' you
-can call this function directly , or enable
-`ctags-auto-update-mode' or with prefix `C-u' then you can
-generate a new TAGS file in directory"
+  "update TAGS in parent directory using `exuberant-ctags'.
+1. you can call this function directly,
+2. enable `ctags-auto-update-mode',
+3. with prefix `C-u' then you can generate a new TAGS file in directory,
+4. with prefix `C-uC-u' save the command to king-ring instead of execute it."
   (interactive "P")
   (let (tags-file-name process)
     (when (or (and args (setq tags-file-name
                               (expand-file-name
-                               "TAGS" (read-directory-name "Generate new TAGS to:" ))))
+                               "TAGS" (read-directory-name "Generate new TAGS to directory:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
                    (or (called-interactively-p 'interactive)
                        (> (- (float-time (current-time))
@@ -209,18 +214,28 @@ generate a new TAGS file in directory"
             (default-directory (file-name-directory tags-file-name)))
         (when (equal system-type 'windows-nt)
           (setq default-directory orig-default-directory))
-        (setq process
-              (apply 'start-process ;;
-                     "update TAGS" " *update TAGS*"
-                     ctags-update-command
-                     (ctags-update-command-args tags-file-name)))
-        (set-process-sentinel process
-                              (lambda (proc change)
-                                (when (string-match "\\(finished\\|exited\\)" change)
-                                  (kill-buffer " *update TAGS*")
-                                  (message "TAGS in parent directory is updated. "  )
-                                  ))))
-            )))
+        (cond
+         ;;with prefix `C-uC-u' save the command to king-ring
+         ;; sometime the directory you select need root privilege
+         ;; so save the command to king-ring,
+         ((and (called-interactively-p 'interactive) args (equal args '(16)))
+          (kill-new (format "cd %s && %s" default-directory
+                            (ctags-update-get-command
+                             ctags-update-command (ctags-update-command-args tags-file-name))))
+          (message "save ctags-upate command to king-ring. (C-y) yank it back."))
+         (t
+          (setq process
+                (apply 'start-process ;;
+                       "update TAGS" " *update TAGS*"
+                       ctags-update-command
+                       (ctags-update-command-args tags-file-name)))
+          (set-process-sentinel process
+                                (lambda (proc change)
+                                  (when (string-match "\\(finished\\|exited\\)" change)
+                                    (kill-buffer " *update TAGS*")
+                                    (message "TAGS in parent directory is updated. "  )
+                                    )))
+          ))))))
 
 ;;;###autoload
 (define-minor-mode ctags-auto-update-mode
