@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-08 23:33:36 星期六
+;; Last Updated: Joseph 2012-09-27 09:42:57 星期四
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -158,8 +158,11 @@
 (require 'custom)
 (require 'etags)
 (require 'helm)
-(require 'helm-config nil t)        ;optional
-(require 'helm-match-plugin nil t)  ;optional
+;; (require 'helm-config nil t)        ;optional
+(eval-when-compile
+   (require 'helm-match-plugin nil t)
+  )
+;;  ;optional
 
 ;;; Custom
 
@@ -452,11 +455,11 @@ will search `toString' in all tag files. and the found
 'toString' is stored in `helm-etags+-previous-matched-pattern'
 so when the `helm-pattern' become to 'toString System public'
 needn't search tag file again."
-  (let ((pattern helm-etags+-untransformed-helm-pattern));;default use whole helm-pattern to search in tag files
+  (let ((pattern (car (helm-mp-make-regexps helm-etags+-untransformed-helm-pattern))));;default use whole helm-pattern to search in tag files
     ;; first collect candidates using first part of helm-pattern
-    (when (featurep 'helm-match-plugin)
-      ;;for example  (helm-mp-make-regexps "boo far") -->("boo" "far")
-      (setq pattern (car (helm-mp-make-regexps helm-etags+-untransformed-helm-pattern))))
+    ;; (when (featurep 'helm-match-plugin)
+    ;;   ;;for example  (helm-mp-make-regexps "boo far") -->("boo" "far")
+    ;;   (setq pattern  (car (helm-mp-make-regexps helm-etags+-untransformed-helm-pattern))))
     (unless (string-equal helm-etags+-previous-matched-pattern pattern)
       ;;          (setq candidates helm-etags+-candidates-cache)
       (setq helm-etags+-candidates-cache (helm-etags+-get-candidates-from-all-tag-file pattern))
@@ -609,8 +612,8 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
         (helm-idle-delay 0))
     ;; Initialize input with current symbol
     (helm-etags+-select-internal
-     (concat "\\_<" (thing-at-point 'symbol) "\\_>"
-             (if (featurep 'helm-match-plugin) " "))
+     (concat "\\_<" (thing-at-point 'symbol) "\\_> ")
+             ;; (if (featurep 'helm-match-plugin) " ")
      "Find Tag: ")))
 
 ;;;###autoload
