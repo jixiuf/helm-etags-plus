@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-27 09:42:57 星期四
+;; Last Updated: Joseph 2012-09-27 09:44:51 星期四
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -155,7 +155,7 @@
 ;; Some functions are borrowed from helm-etags.el and etags-select.el.
 
 ;;; Require
-(require 'custom)
+;; (require 'custom)
 (require 'etags)
 (require 'helm)
 ;; (require 'helm-config nil t)        ;optional
