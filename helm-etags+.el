@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-29 10:59:32 星期六
+;; Last Updated: Joseph 2012-09-29 11:20:44 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -9,8 +9,6 @@
 ;; screencast:http://screencast-repos.googlecode.com/files/emacs-anything-etags-puls.mp4.bz2
 ;; Keywords: helm, etags
 ;; Compatibility: (Test on GNU Emacs 23.2.1)
-;;   I am trying to make it work with XEmacs ,
-;;   but I haven't tested it on XEmacs.
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -46,14 +44,6 @@
 ;;
 ;;  if you use GNU/Emacs ,you can set `tags-table-list' like this.
 ;;  (setq tags-table-list '("/path/of/TAGS1" "/path/of/TAG2"))
-;;
-;;  if you use XEmacs ,you can set `tag-table-alist' like this.
-;;  (setq tag-table-alist
-;;        '(("/usr/src/public/perl/" . "/usr/src/public/perl/perl-3.0/")
-;;          ("\\.el$" . "/usr/local/emacs/src/")
-;;          ("/jbw/gnu/" . "/usr15/degree/stud/jbw/gnu/")
-;;          ("" . "/usr/local/emacs/src/")
-;;  ))
 ;;
 ;;  (global-set-key "\M-." 'helm-etags+-select-one-key)
 ;;       `M-.' call  helm-etags+-select-at-point
@@ -204,15 +194,10 @@
 (defun helm-etags+-highlight (beg end)
   "Highlight a region temporarily.
    (borrowed from etags-select.el)"
-  (if (featurep 'xemacs)
-      (let ((extent (make-extent beg end)))
-        (set-extent-property extent 'face 'helm-etags+-highlight-tag-face)
-        (sit-for helm-etags+-highlight-delay)
-        (delete-extent extent))
-    (let ((ov (make-overlay beg end)))
+  (let ((ov (make-overlay beg end)))
       (overlay-put ov 'face 'helm-etags+-highlight-tag-face)
       (sit-for helm-etags+-highlight-delay)
-      (delete-overlay ov))))
+      (delete-overlay ov)))
 
 ;;; Hooks
 
@@ -243,10 +228,6 @@ will set this variable.")
   "record it to kill-it in persistent-action,in order to
    not open too much buffer.")
 
-(defvar helm-etags+-use-xemacs-etags-p
-  (fboundp 'get-tag-table-buffer)
-  "Use XEmacs etags?")
-
 (defvar helm-etags+-previous-matched-pattern nil
   "work with `helm-etags+-candidates-cache'.
   the value is (car (helm-mp-make-regexps helm-pattern))
@@ -262,20 +243,6 @@ then the cached candidates can be reused ,needn't find from the tag file.")
 getting candidates.")
 
 ;;; Functions
-(defun helm-etags+-match-string (num &optional string))
-(defun helm-etags+-file-truename (filename))
-
-(if (string-match "XEmacs" emacs-version)
-    (fset 'helm-etags+-match-string 'match-string)
-  (fset 'helm-etags+-match-string 'match-string-no-properties)
-  (if helm-etags+-use-xemacs-etags-p
-      (unless (fboundp 'symlink-expand-file-name)
-        (fset 'symlink-expand-file-name 'file-truename))))
-
-(if (fboundp 'symlink-expand-file-name)
-    (fset 'helm-etags+-file-truename 'symlink-expand-file-name)
-  (fset 'helm-etags+-file-truename 'file-truename)
-  )
 
 (defun helm-etags+-case-fold-search ()
   "Get case-fold search."
@@ -283,119 +250,6 @@ getting candidates.")
     (if (memq tags-case-fold-search '(nil t))
         tags-case-fold-search
       case-fold-search)))
-
-(defun helm-etags+-etags-snarf-tag (&optional use-explicit)
-  "borrowed from GNU/Emacs etags.el"
-  (let (tag-text line startpos explicit-start)
-    (if (save-excursion
-          (forward-line -1)
-          (looking-at "\f\n"))
-        ;; The match was for a source file name, not any tag within a file.
-        ;; Give text of t, meaning to go exactly to the location we specify,
-        ;; the beginning of the file.
-        (setq tag-text t
-              line nil
-              startpos (point-min))
-
-      ;; Find the end of the tag and record the whole tag text.
-      (search-forward "\177")
-      (setq tag-text (buffer-substring (1- (point))
-                                       (save-excursion (beginning-of-line)
-                                                       (point))))
-      ;; If use-explicit is non nil and explicit tag is present, use it as part of
-      ;; return value. Else just skip it.
-      (setq explicit-start (point))
-      (when (and (search-forward "\001" (save-excursion (forward-line 1) (point)) t)
-                 use-explicit)
-        (setq tag-text (buffer-substring explicit-start (1- (point)))))
-
-
-      (if (looking-at "[0-9]")
-          (setq line (string-to-number (buffer-substring
-                                        (point)
-                                        (progn (skip-chars-forward "0-9")
-                                               (point))))))
-      (search-forward ",")
-      (if (looking-at "[0-9]")
-          (setq startpos (string-to-number (buffer-substring
-                                            (point)
-                                            (progn (skip-chars-forward "0-9")
-                                                   (point)))))))
-    ;; Leave point on the next line of the tags file.
-    (forward-line 1)
-    (cons tag-text (cons line startpos))))
-
-(defun helm-etags+-goto-tag-location (tag-info)
-  "Go to location of tag specified by TAG-INFO.
-TAG-INFO is a cons (TEXT LINE . POSITION).
-TEXT is the initial part of a line containing the tag.
-LINE is the line number.
-POSITION is the (one-based) char position of TEXT within the file.
-
-If TEXT is t, it means the tag refers to exactly LINE or POSITION,
-whichever is present, LINE having preference, no searching.
-Either LINE or POSITION can be nil.  POSITION is used if present.
-
-If the tag isn't exactly at the given position, then look near that
-position using a search window that expands progressively until it
-hits the start of file."
-  (let ((startpos (cdr (cdr tag-info)))
-        (line (car (cdr tag-info)))
-        offset found pat)
-    (if (eq (car tag-info) t)
-        ;; Direct file tag.
-        (cond (line (progn (goto-char (point-min))
-                           (forward-line (1- line))))
-              (startpos (goto-char startpos))
-              (t (error "etags.el BUG: bogus direct file tag")))
-      ;; This constant is 1/2 the initial search window.
-      ;; There is no sense in making it too small,
-      ;; since just going around the loop once probably
-      ;; costs about as much as searching 2000 chars.
-      (setq offset 1000
-            found nil
-            pat (concat (if (eq selective-display t)
-                            "\\(^\\|\^m\\)" "^")
-                        (regexp-quote (car tag-info))))
-      ;; The character position in the tags table is 0-origin.
-      ;; Convert it to a 1-origin Emacs character position.
-      (if startpos (setq startpos (1+ startpos)))
-      ;; If no char pos was given, try the given line number.
-      (or startpos
-          (if line
-              (setq startpos (progn (goto-char (point-min))
-                                    (forward-line (1- line))
-                                    (point)))))
-      (or startpos
-          (setq startpos (point-min)))
-      ;; First see if the tag is right at the specified location.
-      (goto-char startpos)
-      (setq found (looking-at pat))
-      (while (and (not found)
-                  (progn
-                    (goto-char (- startpos offset))
-                    (not (bobp))))
-        (setq found
-              (re-search-forward pat (+ startpos offset) t)
-              offset (* 3 offset)))	; expand search window
-      (or found
-          (re-search-forward pat nil t)
-          (error "Rerun etags: `%s' not found in %s"
-                 pat buffer-file-name)))
-    ;; Position point at the right place
-    ;; if the search string matched an extra Ctrl-m at the beginning.
-    (and (eq selective-display t)
-         (looking-at "\^m")
-         (forward-char 1))
-    (beginning-of-line)))
-
-(defun helm-etags+-file-of-tag(&optional relative)
-  (save-excursion
-    (re-search-backward "\f\n\\([^\n]+\\),[0-9]*\n")
-    (let ((str (buffer-substring (match-beginning 1) (match-end 1))))
-      (expand-file-name str
-                        (helm-etags+-file-truename default-directory))
-      )))
 
 (defun helm-etags+-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
@@ -408,16 +262,13 @@ not visiting a file"
 
 (defun helm-etags+-get-tag-files()
   "Get tag files."
-  (if helm-etags+-use-xemacs-etags-p
-      (let ((tags-build-completion-table nil))
-        (buffer-tag-table-list))
-    (let ((local-tag  (helm-etags+-find-tags-file)))
+  (let ((local-tag  (helm-etags+-find-tags-file)))
       (when local-tag
         (add-to-list 'tags-table-list (helm-etags+-find-tags-file)))
       (dolist (tag tags-table-list)
         (when (not (file-exists-p tag))
           (setq  tags-table-list (delete tag tags-table-list))))
-      (mapcar 'tags-expand-table-name tags-table-list))))
+      (mapcar 'tags-expand-table-name tags-table-list)))
 
 (defun helm-etags+-rename-tag-file-buffer-maybe(buf)
   (with-current-buffer buf
@@ -433,10 +284,9 @@ not visiting a file"
           (tags-revert-without-query t)
           (large-file-warning-threshold nil)
           (tags-add-tables t))
-      (if helm-etags+-use-xemacs-etags-p
-          (setq tag-table-buffer (get-tag-table-buffer tag-file))
+
         (visit-tags-table-buffer tag-file)
-        (setq tag-table-buffer (find-buffer-visiting tag-file)))
+        (setq tag-table-buffer (find-buffer-visiting tag-file))
       (set-buffer current-buf)
       (helm-etags+-rename-tag-file-buffer-maybe tag-table-buffer))))
 
@@ -465,7 +315,6 @@ needn't search tag file again."
       (setq helm-etags+-candidates-cache (helm-etags+-get-candidates-from-all-tag-file pattern))
       (setq helm-etags+-previous-matched-pattern pattern))
     helm-etags+-candidates-cache))
-
 
 (defun helm-etags+-get-candidates-from-all-tag-file(first-part-of-helm-pattern)
   (let (candidates)
@@ -504,20 +353,20 @@ needn't search tag file again."
         (while (search-forward  tagname nil t) ;;take care this is not re-search-forward ,speed it up
           (beginning-of-line)
           (when (re-search-forward tag-regex (point-at-eol) 'goto-eol)
-            (setq full-tagname (or (helm-etags+-match-string 2) tagname))
+            (setq full-tagname (or (match-string-no-properties 2) tagname))
             (beginning-of-line)
-            (save-excursion (setq tag-info (helm-etags+-etags-snarf-tag)))
+            (save-excursion (setq tag-info (etags-snarf-tag)))
             (re-search-forward "\\s-*\\(.*?\\)\\s-*\^?" (point-at-eol) t)
-            (setq tag-line (helm-etags+-match-string 1))
+            (setq tag-line (match-string-no-properties 1))
             (setq tag-line (replace-regexp-in-string  "/\\*.*\\*/" "" tag-line))
             (setq tag-line (replace-regexp-in-string  "\t" (make-string tab-width ? ) tag-line))
             (end-of-line)
             ;;(setq src-file-name (etags-file-of-tag))
-            (setq src-file-name   (helm-etags+-file-truename (helm-etags+-file-of-tag)))
+            (setq src-file-name   (file-truename (etags-file-of-tag)))
             (let ((display)(real (list  src-file-name tag-info full-tagname))
                   (src-location-display  (file-name-nondirectory src-file-name)))
               (unless helm-etags+-use-short-file-name
-                (let ((tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
+                (let ((tag-table-parent (file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
                       (src-file-parent (file-name-directory src-file-name)))
                   (when (string-match  (regexp-quote tag-table-parent) src-file-name)
                     (if (equal 'last helm-etags+-filename-location)
@@ -546,7 +395,7 @@ needn't search tag file again."
       ;; Jump to tag position when
       ;; tag file is valid.
       (setq src-file-buf (find-file src-file-name))
-      (helm-etags+-goto-tag-location  tag-info)
+      (etags-goto-tag-location  tag-info)
 
       (beginning-of-line)
       (when (search-forward tagname (point-at-eol) t)
