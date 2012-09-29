@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-29 11:20:44 星期六
+;; Last Updated: Joseph 2012-09-30 01:01:02 星期日
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -162,9 +162,11 @@
   :group 'etags)
 
 (defcustom helm-etags+-use-short-file-name nil
-  "Use short source file name as each candidate's display.
+  "t means use filename,
+  'absolute means use absolute filename
+  nil means use relative filename as the display,
  search '(DISPLAY . REAL)' in helm.el for more info."
-  :type 'boolean
+  :type '(choice (const nil) (const t) (const absolute))
   :group 'helm-etags+)
 
 (defcustom helm-etags+-filename-location 'last
@@ -364,8 +366,9 @@ needn't search tag file again."
             ;;(setq src-file-name (etags-file-of-tag))
             (setq src-file-name   (file-truename (etags-file-of-tag)))
             (let ((display)(real (list  src-file-name tag-info full-tagname))
-                  (src-location-display  (file-name-nondirectory src-file-name)))
-              (unless helm-etags+-use-short-file-name
+                  (src-location-display (file-name-nondirectory src-file-name)))
+              (cond
+               ((equal helm-etags+-use-short-file-name nil)
                 (let ((tag-table-parent (file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
                       (src-file-parent (file-name-directory src-file-name)))
                   (when (string-match  (regexp-quote tag-table-parent) src-file-name)
@@ -373,6 +376,11 @@ needn't search tag file again."
                         (setq src-location-display (substring src-file-name (length  tag-table-parent)))
                       (setq src-location-display (concat src-location-display " "  (substring src-file-parent (length  tag-table-parent))))
                       ))))
+               ((equal helm-etags+-use-short-file-name t)
+                (setq src-location-display (file-name-nondirectory src-file-name)))
+               ((equal helm-etags+-use-short-file-name 'absolute)
+                (setq src-location-display src-file-name)
+                ))
               (setq display (concat tag-line
                                     (or (ignore-errors
                                           (make-string (- (window-width)
