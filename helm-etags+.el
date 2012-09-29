@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-27 09:44:51 星期四
+;; Last Updated: Joseph 2012-09-29 10:59:32 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -171,7 +171,7 @@
   :prefix "helm-etags+-"
   :group 'etags)
 
-(defcustom helm-etags+-use-short-file-name t
+(defcustom helm-etags+-use-short-file-name nil
   "Use short source file name as each candidate's display.
  search '(DISPLAY . REAL)' in helm.el for more info."
   :type 'boolean
