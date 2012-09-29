@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-30 01:01:02 星期日
+;; Last Updated: Joseph 2012-09-30 01:18:31 星期日
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -128,11 +128,11 @@
 ;; Below are customizable option list:
 ;;
 ;;  `helm-etags+-use-short-file-name'
-;;    Use short source file name as each candidate's display.
-;;    default = t
+;;    t means use filename,
+;;    default = nil
 ;;  `helm-etags+-filename-location'
-;;    this var only work when `helm-etags+-use-short-file-name' is nil.
-;;    default = (quote last)
+;;    display src filename after src file name parent dir or not.
+;;    default = (quote filename-after-dir)
 ;;  `helm-etags+-highlight-tag-after-jump'
 ;;    *If non-nil, temporarily highlight the tag
 ;;    default = t
@@ -169,9 +169,9 @@
   :type '(choice (const nil) (const t) (const absolute))
   :group 'helm-etags+)
 
-(defcustom helm-etags+-filename-location 'last
-  "this var only work when `helm-etags+-use-short-file-name' is nil."
-  :type '(choice (const first) (const last))
+(defcustom helm-etags+-filename-location 'filename-after-dir
+  "display src filename after src file name parent dir or not."
+  :type '(choice (const filename-before-dir) (const filename-after-dir))
   :group 'helm-etags+)
 
 (defcustom helm-etags+-highlight-tag-after-jump t
@@ -372,14 +372,21 @@ needn't search tag file again."
                 (let ((tag-table-parent (file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
                       (src-file-parent (file-name-directory src-file-name)))
                   (when (string-match  (regexp-quote tag-table-parent) src-file-name)
-                    (if (equal 'last helm-etags+-filename-location)
+                    (if (equal 'filename-after-dir helm-etags+-filename-location)
                         (setq src-location-display (substring src-file-name (length  tag-table-parent)))
-                      (setq src-location-display (concat src-location-display " "  (substring src-file-parent (length  tag-table-parent))))
+                      (setq src-location-display (concat src-location-display "\\"  (substring src-file-parent (length  tag-table-parent))))
                       ))))
                ((equal helm-etags+-use-short-file-name t)
                 (setq src-location-display (file-name-nondirectory src-file-name)))
                ((equal helm-etags+-use-short-file-name 'absolute)
-                (setq src-location-display src-file-name)
+                (let ((src-file-parent (file-name-directory src-file-name)))
+                  (if (equal 'filename-after-dir helm-etags+-filename-location)
+                      (setq src-location-display src-file-name)
+                    (setq src-location-display (concat src-location-display "\\"
+                                                       (mapconcat 'identity (reverse (split-string src-file-parent "/")) "/" )))
+                  )
+                  )
+
                 ))
               (setq display (concat tag-line
                                     (or (ignore-errors
