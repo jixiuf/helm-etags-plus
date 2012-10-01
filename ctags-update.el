@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-09-22 12:20:15 星期六
+;; Last Updated: Joseph 2012-10-01 17:39:53 星期一
 ;; Version: 0.2.1
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -42,7 +42,7 @@
 ;; `exuberant-ctags' update TAGS,
 ;; it would not be updated if last time calling `ctags-update' is not 5 minute age(default).
 ;;
-;; if you want to update TAGS only when you want.
+;; if you want to update TAGS immediately
 ;; you can
 ;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
 ;;     (global-set-key "\C-cE" 'ctags-update)
