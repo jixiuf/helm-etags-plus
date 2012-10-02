@@ -4,7 +4,7 @@
 
   (setq tags-table-list '("/path/of/TAGS1"    "/path/of/TAG2"))
 
-  and it can searches parent directory recursively for a file named
+  and it can search parent directory recursively for a file named
   'TAGS'. so you needn't add this special file to `tags-table-list'
 
 * ctags-update.el
