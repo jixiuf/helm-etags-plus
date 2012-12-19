@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: Joseph 2012-10-01 17:39:53 星期一
+;; Last Updated: 纪秀峰 2012-12-19 10:35:16 星期三
 ;; Version: 0.2.1
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -47,7 +47,7 @@
 ;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
 ;;     (global-set-key "\C-cE" 'ctags-update)
 ;; with prefix `C-u' ,then you can generate a new TAGS file in your selected directory,
-;; with prefix `C-uC-u' same to prefix `C-u',but save it to king-ring instead of execute it."
+;; with prefix `C-uC-u' same to prefix `C-u',but save it to kill-ring instead of execute it."
 
 ;;
 ;; on windows ,you can custom `ctags-update-command' like this:
@@ -193,7 +193,7 @@ not visiting a file"
 1. you can call this function directly,
 2. enable `ctags-auto-update-mode',
 3. with prefix `C-u' then you can generate a new TAGS file in directory,
-4. with prefix `C-uC-u' save the command to king-ring instead of execute it."
+4. with prefix `C-uC-u' save the command to kill-ring instead of execute it."
   (interactive "P")
   (let (tags-file-name process)
     (when (or (and args (setq tags-file-name
@@ -215,9 +215,9 @@ not visiting a file"
         (when (equal system-type 'windows-nt)
           (setq default-directory orig-default-directory))
         (cond
-         ;;with prefix `C-uC-u' save the command to king-ring
+         ;;with prefix `C-uC-u' save the command to kill-ring
          ;; sometime the directory you select need root privilege
-         ;; so save the command to king-ring,
+         ;; so save the command to kill-ring,
          ((and (called-interactively-p 'interactive) args (equal args '(16)))
           (kill-new (format "cd %s && %s" default-directory
                             (ctags-update-get-command
