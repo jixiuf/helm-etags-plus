@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2012-12-22 09:49:44 星期六
+;; Last Updated: 纪秀峰 2012-12-22 09:55:22 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -499,7 +499,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
                            (setq helm-etags+-untransformed-helm-pattern helm-pattern)
                            (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  helm-pattern))))
     (requires-pattern  . 3);;need at least 3 char
-    (delayed);; (setq helm-idle-delay-4-anthing-etags+ 1)
+    (delayed);; (setq helm-idle-delay-4-helm-etags+ 1)
     (action ("Goto the location" . helm-c-etags+-goto-location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
