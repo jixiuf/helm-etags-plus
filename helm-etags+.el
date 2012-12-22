@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2012-12-22 09:48:41 星期六
+;; Last Updated: 纪秀峰 2012-12-22 09:49:44 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -653,7 +653,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
          (lambda () (message "No history record in `helm-etags+-tag-marker-ring'"))))
     (helm :sources    '(helm-c-source-etags+-history)
           :input      ""
-          :preselect  "\t")))
+          :preselect  "\t")))           ;if an candidate ,then this line is preselected
 
 (provide 'helm-etags+)
 ;;;helm-etags+.el ends here.
