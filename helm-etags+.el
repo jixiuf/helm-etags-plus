@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: Joseph 2012-09-30 01:18:31 星期日
+;; Last Updated: 纪秀峰 2012-12-22 09:48:41 星期六
 ;; Version: 0.1.5
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -453,9 +453,10 @@ needn't search tag file again."
 
 (defun helm-etags+-select-internal(init-pattern prompt)
   (run-hooks 'helm-etags+-select-hook)
-  (helm '(helm-c-source-etags+-select)
-            ;; Initialize input with current symbol
-            init-pattern  prompt nil))
+  (helm  :sources '(helm-c-source-etags+-select)
+         ;; Initialize input with current symbol
+         :input init-pattern
+         :prompt prompt))
 
 ;;;###autoload
 (defun helm-etags+-select()
@@ -650,9 +651,9 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
   (let ((helm-execute-action-at-once-if-one t)
         (helm-quit-if-no-candidate
          (lambda () (message "No history record in `helm-etags+-tag-marker-ring'"))))
-    (helm '(helm-c-source-etags+-history)
-              ;; Initialize input with current symbol
-              ""  nil nil "\t")))
+    (helm :sources    '(helm-c-source-etags+-history)
+          :input      ""
+          :preselect  "\t")))
 
 (provide 'helm-etags+)
 ;;;helm-etags+.el ends here.
