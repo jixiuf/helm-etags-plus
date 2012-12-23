@@ -312,11 +312,13 @@ needn't search tag file again."
     ;; (when (featurep 'helm-match-plugin)
     ;;   ;;for example  (helm-mp-make-regexps "boo far") -->("boo" "far")
     ;;   (setq pattern  (car (helm-mp-make-regexps helm-etags+-untransformed-helm-pattern))))
-    (unless (string-equal helm-etags+-previous-matched-pattern pattern)
-      ;;          (setq candidates helm-etags+-candidates-cache)
-      (setq helm-etags+-candidates-cache (helm-etags+-get-candidates-from-all-tag-file pattern))
-      (setq helm-etags+-previous-matched-pattern pattern))
-    helm-etags+-candidates-cache))
+    (cond
+     ((or (string-equal "" pattern) (string-equal "\\_<\\_>" pattern))
+       nil)
+     ((not  (string-equal helm-etags+-previous-matched-pattern pattern))
+       (setq helm-etags+-previous-matched-pattern pattern)
+       (setq helm-etags+-candidates-cache (helm-etags+-get-candidates-from-all-tag-file pattern)))
+     (t helm-etags+-candidates-cache))))
 
 (defun helm-etags+-get-candidates-from-all-tag-file(first-part-of-helm-pattern)
   (let (candidates)
