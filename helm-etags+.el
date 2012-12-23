@@ -1,8 +1,8 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2012-12-22 09:55:22 星期六
-;; Version: 0.1.5
+;; Last Updated: 纪秀峰 2012-12-23 17:53:59 星期日
+;; Version: 0.1.6
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
@@ -45,9 +45,9 @@
 ;;  if you use GNU/Emacs ,you can set `tags-table-list' like this.
 ;;  (setq tags-table-list '("/path/of/TAGS1" "/path/of/TAG2"))
 ;;
-;;  (global-set-key "\M-." 'helm-etags+-select-one-key)
-;;       `M-.' call  helm-etags+-select-at-point
-;;       `C-uM-.' call helm-etags+-select
+;;  (global-set-key "\M-." 'helm-etags+-select)
+;;       `M-.' default use symbol under point as tagname
+;;       `C-uM-.' use pattern you typed as tagname
 ;;
 ;; helm-etags+.el also support history go back ,go forward and list tag
 ;; histories you have visited.(must use commands list here:)
@@ -84,9 +84,7 @@
 ;;
 ;; I use GNU/Emacs,and this is my config file about etags
 ;; (require 'helm-etags+)
-;; (setq helm-etags+-use-short-file-name nil)
-;; ;;you can use  C-uM-. input symbol (default thing-at-point 'symbol)
-;; (global-set-key "\M-." 'helm-etags+-select-one-key)
+;; (global-set-key "\M-." 'helm-etags+-select)
 ;; ;;list all visited tags
 ;; (global-set-key "\M-*" 'helm-etags+-history)
 ;; ;;go back directly
@@ -111,11 +109,7 @@
 ;; Below are complete command list:
 ;;
 ;;  `helm-etags+-select'
-;;    Tag jump using etags and `helm'.
-;;  `helm-etags+-select-at-point'
-;;    Tag jump with current symbol using etags and `helm'.
-;;  `helm-etags+-select-one-key'
-;;    you can bind this to `M-.'
+;;    Find Tag using `etags' and `helm'
 ;;  `helm-etags+-history-go-back'
 ;;    Go Back.
 ;;  `helm-etags+-history-go-forward'
@@ -222,7 +216,7 @@ forward are related to this variable.")
 (defvar helm-etags+-tag-table-buffers nil
   "each time `helm-etags+-select' is executed ,it
 will set this variable.")
-(defvar helm-idle-delay-4-helm-etags+ 1.0
+(defvar helm-input-idle-delay-4-helm-etags+ 0.8
   "see `helm-idle-delay'. I will set it locally
    in `helm-etags+-select'")
 
@@ -453,45 +447,28 @@ needn't search tag file again."
   (helm-etags+-find-tag candidate);;core func.
   )
 
-(defun helm-etags+-select-internal(init-pattern prompt)
-  (run-hooks 'helm-etags+-select-hook)
-  (helm  :sources '(helm-c-source-etags+-select)
-         ;; Initialize input with current symbol
-         :input init-pattern
-         :prompt prompt))
 
 ;;;###autoload
-(defun helm-etags+-select()
-  "Tag jump using etags and `helm'.
-If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
-  (interactive)
-  (let ((helm-execute-action-at-once-if-one t)
-        (helm-candidate-number-limit nil)
-        (helm-idle-delay helm-idle-delay-4-helm-etags+))
-    (helm-etags+-select-internal nil "Find Tag(require 3 char): ")))
-
-;;;###autoload
-(defun helm-etags+-select-at-point()
-  "Tag jump with current symbol using etags and `helm'."
-  (interactive)
-  (let ((helm-execute-action-at-once-if-one t)
-        (helm-candidate-number-limit nil)
-        (helm-idle-delay 0))
-    ;; Initialize input with current symbol
-    (helm-etags+-select-internal
-     (concat "\\_<" (thing-at-point 'symbol) "\\_> ")
-             ;; (if (featurep 'helm-match-plugin) " ")
-     "Find Tag: ")))
-
-;;;###autoload
-(defun helm-etags+-select-one-key (&optional args)
-  "you can bind this to `M-.'"
+(defun helm-etags+-select(arg)
+  "Find Tag using `etags' and `helm'"
   (interactive "P")
-  (if args
-      (helm-etags+-select)
-    (helm-etags+-select-at-point)))
+  (let ((helm-execute-action-at-once-if-one t)
+        (helm-maybe-use-default-as-input nil)
+        (helm-candidate-number-limit nil)
+        (helm-input-idle-delay helm-input-idle-delay-4-helm-etags+))
+    (run-hooks 'helm-etags+-select-hook)
+    ;; (helm-etags+-select-internal nil "Find Tag(require 3 char): ")
+    (cond
+     ((equal arg '(4))                  ;C-u
+      (helm  :sources 'helm-c-source-etags+-select
+             :prompt "Find Tag(require 3 char): "))
+     (t (setq helm-maybe-use-default-as-input t)
+        (helm  :sources 'helm-c-source-etags+-select
+               :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
+               ;; Initialize input with current symbol
+               ;; :input init-pattern
+               :prompt "Find Tag(require 3 char): ")))))
 
-;;;###autoload
 (defvar helm-c-source-etags+-select
   '((name . "Etags+")
     (init . helm-etags+-get-available-tag-table-buffers)
@@ -501,7 +478,7 @@ If SYMBOL-NAME is non-nil, jump tag position with SYMBOL-NAME."
                            (setq helm-etags+-untransformed-helm-pattern helm-pattern)
                            (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  helm-pattern))))
     (requires-pattern  . 3);;need at least 3 char
-    (delayed);; (setq helm-idle-delay-4-helm-etags+ 1)
+    ;; (delayed);; (setq helm-input-idle-delay-4-helm-etags+ 1)
     (action ("Goto the location" . helm-c-etags+-goto-location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
