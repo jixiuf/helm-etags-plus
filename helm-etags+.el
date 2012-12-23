@@ -1,8 +1,8 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2012-12-23 17:53:59 星期日
-;; Version: 0.1.6
+;; Last Updated: 纪秀峰 2012-12-23 19:45:29 星期日
+;; Version: 0.1.7
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
@@ -431,21 +431,52 @@ needn't search tag file again."
             (setq previous-opened-buffer-in-persistent-action src-file-buf))
         (setq previous-opened-buffer-in-persistent-action nil)))))
 
+(defun pos-in-same-symbol-p(marker1 marker2)
+  "check whether `marker1' and `marker2' are at the same place or not"
+  (cond
+   ((and (helm-etags+-is-marker-available marker1)
+         (helm-etags+-is-marker-available marker2)
+         (equal (marker-buffer marker1) (marker-buffer marker2)))
+    (let((pos1 (marker-position marker1))
+         (pos2 (marker-position marker2))
+         bounds1 bounds2)
+      (setq bounds1
+            (unwind-protect
+                (save-excursion
+                  (goto-char pos1)
+                  (bounds-of-thing-at-point 'symbol) )
+              nil))
+      (setq bounds2
+            (unwind-protect
+                (save-excursion
+                  (goto-char pos2)
+                  (bounds-of-thing-at-point 'symbol) )
+              nil))
+      (and bounds1 bounds1
+           (equal bounds1 bounds2))))
+   (t nil)))
+
 (defun helm-c-etags+-goto-location (candidate)
   (unless helm-in-persistent-action
-    (when (and
-           (not (ring-empty-p helm-etags+-tag-marker-ring))
-           helm-etags+-current-marker-in-tag-marker-ring
-           (not (equal helm-etags+-current-marker-in-tag-marker-ring (ring-ref helm-etags+-tag-marker-ring 0))))
-      (while (not (ring-empty-p helm-etags+-tag-marker-ring ))
-        (ring-remove helm-etags+-tag-marker-ring)
-        ))
     ;;you can use `helm-etags+-history' go back
+    (when (or  (ring-empty-p helm-etags+-tag-marker-ring)
+               (not (pos-in-same-symbol-p  (point-marker)
+                                           (ring-ref helm-etags+-tag-marker-ring 0))))
+      (let ((index (ring-member helm-etags+-tag-marker-ring (point-marker))))
+        (when index (ring-remove helm-etags+-tag-marker-ring index)))
+      (ring-insert helm-etags+-tag-marker-ring (point-marker))
+      ))
+
+  (helm-etags+-find-tag candidate);;core func.
+
+  (when (or  (ring-empty-p helm-etags+-tag-marker-ring)
+             (not (pos-in-same-symbol-p  (point-marker)
+                                         (ring-ref helm-etags+-tag-marker-ring 0))))
+    (let ((index (ring-member helm-etags+-tag-marker-ring (point-marker))))
+      (when index (ring-remove helm-etags+-tag-marker-ring index)))
     (ring-insert helm-etags+-tag-marker-ring (point-marker))
     (setq helm-etags+-current-marker-in-tag-marker-ring (point-marker))
-    )
-  (helm-etags+-find-tag candidate);;core func.
-  )
+    ))
 
 
 ;;;###autoload
@@ -571,24 +602,34 @@ needn't search tag file again."
   "Go Back."
   (interactive)
   (helm-etags+-history-init)
-  (when (and
-         (helm-etags+-is-marker-available helm-etags+-current-marker-in-tag-marker-ring)
-         (ring-member helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring))
-    (let* ((next-marker (ring-next helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring)))
-      (helm-etags+-history-go-internel next-marker)
-      (setq helm-etags+-current-marker-in-tag-marker-ring next-marker))))
+  (when
+      (let ((next-marker))
+        (cond ((and (helm-etags+-is-marker-available helm-etags+-current-marker-in-tag-marker-ring)
+                    (ring-member helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring))
+               (setq next-marker (ring-next helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring)))
+              ((not(ring-empty-p helm-etags+-tag-marker-ring))
+               (setq next-marker  (ring-ref helm-etags+-tag-marker-ring 0)))
+              (t nil))
+        (when next-marker
+          (helm-etags+-history-go-internel next-marker)
+          (setq helm-etags+-current-marker-in-tag-marker-ring next-marker)))))
 
 ;;;###autoload
 (defun helm-etags+-history-go-forward()
   "Go Forward."
   (interactive)
   (helm-etags+-history-init)
-  (when (and
-         (helm-etags+-is-marker-available helm-etags+-current-marker-in-tag-marker-ring)
-         (ring-member helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring))
-    (let* ((previous-marker (ring-previous helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring)))
-      (helm-etags+-history-go-internel previous-marker)
-      (setq helm-etags+-current-marker-in-tag-marker-ring previous-marker))))
+  (when
+      (let ((prev-marker))
+        (cond ((and (helm-etags+-is-marker-available helm-etags+-current-marker-in-tag-marker-ring)
+                    (ring-member helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring))
+               (setq prev-marker (ring-next helm-etags+-tag-marker-ring helm-etags+-current-marker-in-tag-marker-ring)))
+              ((not(ring-empty-p helm-etags+-tag-marker-ring))
+               (setq prev-marker  (ring-ref helm-etags+-tag-marker-ring 0)))
+              (t nil))
+        (when prev-marker
+          (helm-etags+-history-go-internel prev-marker)
+          (setq helm-etags+-current-marker-in-tag-marker-ring prev-marker)))))
 
 (defun helm-etags+-history-go-internel (candidate-marker)
   "Go to the location depend on candidate."
@@ -605,13 +646,8 @@ needn't search tag file again."
   "List all history."
   (helm-etags+-history-go-internel candidate)
   (unless  helm-in-persistent-action
-    (setq helm-etags+-current-marker-in-tag-marker-ring candidate)
-    ;; (when helm-etags+-history-tmp-marker
-    ;;   (ring-insert helm-etags+-tag-marker-ring helm-etags+-history-tmp-marker)
-    ;;   (setq helm-etags+-history-tmp-marker nil))
-    )
-  (when (and helm-in-persistent-action ;;color
-             (fboundp 'helm-match-line-color-current-line))
+    (setq helm-etags+-current-marker-in-tag-marker-ring candidate))
+  (when  helm-in-persistent-action
     (helm-match-line-color-current-line)))
 
 (defvar helm-c-source-etags+-history
