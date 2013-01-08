@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2012-12-23 19:53:26 星期日
+;; Last Updated: 纪秀峰 2013-01-08 15:02:40 星期二
 ;; Version: 0.1.7
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -270,7 +270,8 @@ not visiting a file"
   (with-current-buffer buf
     (if (string-match "^ \\*Helm" (buffer-name))
         buf
-      (rename-buffer (concat" *Helm etags+:" (buffer-name) "*") t)
+      (rename-buffer (concat" *Helm etags+:" (buffer-name)
+                            "-" (number-to-string (random)) "*") nil)
       ))buf)
 
 (defun helm-etags+-get-tag-table-buffer (tag-file)
