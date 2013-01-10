@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2013-01-08 15:02:40 星期二
+;; Last Updated: 纪秀峰 2013-01-10 14:40:45 星期四
 ;; Version: 0.1.7
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -478,27 +478,40 @@ needn't search tag file again."
     (ring-insert helm-etags+-markers (point-marker))
     (setq helm-etags+-cur-mark (point-marker))))
 
-
-;;;###autoload
-(defun helm-etags+-select(arg)
-  "Find Tag using `etags' and `helm'"
+;; if you want call helm-etags in your special function
+;; you can do it like this
+;; (condition-case nil
+;;     (helm-etags+-select-internal   (concat "\\_<" "helm-etags+-dddselect-internal" "\\_>"))
+;;   (error (message "do something when no candidates found")))
+(defun helm-etags+-select-internal(&optional pattern)
+  "Find Tag using `etags' and `helm' `pattern' is a regexp."
   (interactive "P")
   (let ((helm-execute-action-at-once-if-one t)
+        (helm-quit-if-no-candidate  (lambda()(error "no candidates")))
         (helm-maybe-use-default-as-input nil)
         (helm-candidate-number-limit nil)
         (helm-input-idle-delay helm-input-idle-delay-4-helm-etags+))
+    (when (and pattern (string-equal "" pattern) ) (setq helm-quit-if-no-candidate nil) )
     (run-hooks 'helm-etags+-select-hook)
-    ;; (helm-etags+-select-internal nil "Find Tag(require 3 char): ")
-    (cond
-     ((equal arg '(4))                  ;C-u
-      (helm  :sources 'helm-c-source-etags+-select
-             :prompt "Find Tag(require 3 char): "))
-     (t (setq helm-maybe-use-default-as-input t)
-        (helm  :sources 'helm-c-source-etags+-select
-               :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
-               ;; Initialize input with current symbol
-               ;; :input init-pattern
-               :prompt "Find Tag(require 3 char): ")))))
+    (helm  :sources 'helm-c-source-etags+-select
+           ;; :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
+           ;; Initialize input with current symbol
+           :input (or pattern (concat "\\_<" (thing-at-point 'symbol) "\\_>"))
+           :prompt "Find Tag(require 3 char): ")))
+
+;; if you want call helm-etags in your special function
+;; you can do it like this
+;; (condition-case nil
+;;     (helm-etags+-select)
+;;   (error (message "do something when no candidates found")))
+;;;###autoload
+(defun helm-etags+-select(&optional arg)
+  "Find Tag using `etags' and `helm'"
+  (interactive "P")
+  (cond
+   ((equal arg '(4))                  ;C-u
+    (helm-etags+-select-internal "")) ;waiting for you input pattern
+   (t (helm-etags+-select-internal))))  ;use thing-at-point as symbol
 
 (defvar helm-c-source-etags+-select
   '((name . "Etags+")
