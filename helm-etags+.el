@@ -623,7 +623,7 @@ needn't search tag file again."
       (let ((prev-marker))
         (cond ((and (helm-etags+-is-marker-available helm-etags+-cur-mark)
                     (ring-member helm-etags+-markers helm-etags+-cur-mark))
-               (setq prev-marker (ring-next helm-etags+-markers helm-etags+-cur-mark)))
+               (setq prev-marker (ring-previous helm-etags+-markers helm-etags+-cur-mark)))
               ((not(ring-empty-p helm-etags+-markers))
                (setq prev-marker  (ring-ref helm-etags+-markers 0)))
               (t nil))
