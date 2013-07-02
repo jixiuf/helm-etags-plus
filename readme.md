@@ -26,8 +26,10 @@ ctags-update.el
 
    when you save a file ,'ctags-auto-update-mode' will recursively searches each
    parent directory for a file named 'TAGS'. if found ,it will use
-   'exuberant-ctags' update TAGS,
+   'exuberant-ctags' update TAGS.
+   
    it would not be updated if last time calling 'ctags-update' is not 5 minute age(default).
+   
    if no 'TAGS' found ,it will check 'tags-table-list' and 'tags-file-name'
    if current buffer shares the same parent directory with 'tags-file-name'
    or one element of 'tags-table-list', it will auto create 'TAGS' file .
