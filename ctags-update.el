@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: 纪秀峰 2012-12-19 10:35:16 星期三
+;; Last Updated: 纪秀峰 2013-07-03 00:03:16 3
 ;; Version: 0.2.1
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -41,8 +41,11 @@
 ;; parent directory for a file named 'TAGS'. if found ,it will use
 ;; `exuberant-ctags' update TAGS,
 ;; it would not be updated if last time calling `ctags-update' is not 5 minute age(default).
+;; if no 'TAGS' found ,it will check `tags-table-list' and `tags-file-name'
+;; if current buffer shares the same parent directory with `tags-file-name' or one element `tags-table-list'
+;; it will auto create file 'TAGS'
 ;;
-;; if you want to update TAGS immediately
+;; if you want to update (create) TAGS manually
 ;; you can
 ;;     (autoload 'ctags-update "ctags-update" "update TAGS using ctags" t)
 ;;     (global-set-key "\C-cE" 'ctags-update)
@@ -83,6 +86,8 @@
 ;;    default = " ctagsU"
 
 ;;; Code:
+
+(require 'etags)
 
 (defgroup ctags-update nil
   "auto update TAGS in parent directory using `exuberant-ctags'"
@@ -185,7 +190,21 @@ not visiting a file"
   (let ((tag-root-dir (locate-dominating-file default-directory "TAGS")))
     (if tag-root-dir
         (expand-file-name "TAGS" tag-root-dir)
-      nil)))
+      (if (and tags-file-name
+               (string-match (regexp-quote (ctags-update-file-truename  default-directory))
+                             (ctags-update-file-truename tags-file-name)))
+          tags-file-name
+        (if tags-table-list
+            (let (matched-tag-names match-tag-element)
+              (dolist (tagname tags-table-list)
+                (when (string-match (regexp-quote (ctags-update-file-truename  default-directory))
+                                    (ctags-update-file-truename tagname))
+                  (add-to-list 'matched-tag-names tagname)))
+              (when matched-tag-names
+                (setq match-tag-element (car matched-tag-names))
+                      (if (file-directory-p match-tag-element)
+                          (expand-file-name "TAGS"  match-tag-element)
+                        match-tag-element))))))))
 
 ;;;###autoload
 (defun ctags-update(&optional args)
@@ -195,8 +214,8 @@ not visiting a file"
 3. with prefix `C-u' then you can generate a new TAGS file in directory,
 4. with prefix `C-uC-u' save the command to kill-ring instead of execute it."
   (interactive "P")
-  (let (tags-file-name process)
-    (when (or (and args (setq tags-file-name
+  (let (tags-filename process)
+    (when (or (and args (setq tags-filename
                               (expand-file-name
                                "TAGS" (read-directory-name "Generate new TAGS to directory:" ))))
               (and (not (get-process "update TAGS"));;if "update TAGS" process is not already running
@@ -204,14 +223,14 @@ not visiting a file"
                        (> (- (float-time (current-time))
                              ctags-update-last-update-time)
                           ctags-update-delay-seconds))
-                   (setq tags-file-name (ctags-update-find-tags-file))
+                   (setq tags-filename (ctags-update-find-tags-file))
                    (not (and (buffer-file-name)
-                             (string-equal (ctags-update-file-truename tags-file-name)
+                             (string-equal (ctags-update-file-truename tags-filename)
                                            (ctags-update-file-truename (buffer-file-name)))
                              ))))
       (setq ctags-update-last-update-time (float-time (current-time)));;update time
       (let ((orig-default-directory default-directory)
-            (default-directory (file-name-directory tags-file-name)))
+            (default-directory (file-name-directory tags-filename)))
         (when (equal system-type 'windows-nt)
           (setq default-directory orig-default-directory))
         (cond
@@ -221,14 +240,14 @@ not visiting a file"
          ((and (called-interactively-p 'interactive) args (equal args '(16)))
           (kill-new (format "cd %s && %s" default-directory
                             (ctags-update-get-command
-                             ctags-update-command (ctags-update-command-args tags-file-name))))
+                             ctags-update-command (ctags-update-command-args tags-filename))))
           (message "save ctags-upate command to king-ring. (C-y) yank it back."))
          (t
           (setq process
                 (apply 'start-process ;;
                        "update TAGS" " *update TAGS*"
                        ctags-update-command
-                       (ctags-update-command-args tags-file-name)))
+                       (ctags-update-command-args tags-filename)))
           (set-process-sentinel process
                                 (lambda (proc change)
                                   (when (string-match "\\(finished\\|exited\\)" change)
