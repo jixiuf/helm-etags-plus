@@ -1,8 +1,8 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: 纪秀峰 2013-07-03 00:03:16 3
-;; Version: 0.2.1
+;; Last Updated: 纪秀峰 2013-07-03 00:07:20 3
+;; Version: 0.2.2
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
 ;; URL: https://github.com/jixiuf/helm-etags-plus
