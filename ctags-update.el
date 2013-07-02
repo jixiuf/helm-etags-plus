@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: 纪秀峰 2013-07-03 00:07:20 3
+;; Last Updated: 纪秀峰 2013-07-03 00:08:44 3
 ;; Version: 0.2.2
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -44,6 +44,10 @@
 ;; if no 'TAGS' found ,it will check `tags-table-list' and `tags-file-name'
 ;; if current buffer shares the same parent directory with `tags-file-name' or one element `tags-table-list'
 ;; it will auto create file 'TAGS'
+;; eq:
+;;    (setq tags-file-name "/tmp/TAGS")
+;;  or
+;;    (setq tags-table-list '("/tmp/TAGS"))
 ;;
 ;; if you want to update (create) TAGS manually
 ;; you can
