@@ -1,7 +1,7 @@
 ;;; ctags-update.el --- (auto) update TAGS in parent directory using exuberant-ctags
 
 ;; Created: 2011-10-16 13:17
-;; Last Updated: 纪秀峰 2013-07-03 00:22:45 3
+;; Last Updated: 纪秀峰 2013-11-07 17:20:01 4
 ;; Version: 0.2.2
 ;; Author: Joseph(纪秀峰)  jixiuf@gmail.com
 ;; Keywords: exuberant-ctags etags
@@ -114,6 +114,8 @@ then `ctags-update' will be called"
 
 (defcustom ctags-update-other-options
   (list
+   "--fields=+iaS"
+   "--extra=+q"
    "--exclude='*.elc'"
    "--exclude='*.class'"
    "--exclude='.git'"
