@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2013-08-26 23:53:16 1
+;; Last Updated: 纪秀峰 2013-11-25 23:42:03 
 ;; Version: 0.1.7
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -421,8 +421,8 @@ needn't search tag file again."
           (helm-etags+-highlight (match-beginning 0) (match-end 0))))
 
       (when (and helm-in-persistent-action ;;color
-                 (fboundp 'helm-match-line-color-current-line))
-        (helm-match-line-color-current-line))
+                 (fboundp 'helm-highlight-current-line))
+        (helm-highlight-current-line))
 
       (if helm-in-persistent-action ;;prevent from opening too much buffer in persistent action
           (progn
@@ -648,7 +648,7 @@ needn't search tag file again."
   (unless  helm-in-persistent-action
     (setq helm-etags+-cur-mark candidate))
   (when  helm-in-persistent-action
-    (helm-match-line-color-current-line)))
+    (helm-highlight-current-line)))
 
 (defvar helm-c-source-etags+-history
   '((name . "Etags+ History: ")
