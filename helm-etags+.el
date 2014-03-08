@@ -1,8 +1,8 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2014-03-08 13:24:39
-;; Version: 0.1.7
+;; Last Updated: 纪秀峰 2014-03-08 13:26:18
+;; Version: 0.2.1
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
