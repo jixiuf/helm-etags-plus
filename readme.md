@@ -42,4 +42,4 @@ anything.el has been renamed to helm.el .
   - https://github.com/emacs-helm/helm.
 
 so I renamed anything-etag-plus to helm-etag-plus,and new repos
-will be https://github.com/jixiuf/helm-etag-plus
+will be https://github.com/jixiuf/helm-etags-plus
