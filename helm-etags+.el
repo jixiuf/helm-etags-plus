@@ -1,7 +1,7 @@
 ;;; helm-etags+.el --- Another Etags helm.el interface
 
 ;; Created: 2011-02-23
-;; Last Updated: 纪秀峰 2014-03-08 13:26:18
+;; Last Updated: 纪秀峰 2014-05-25 15:11:15
 ;; Version: 0.2.1
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
@@ -258,6 +258,16 @@ getting candidates.")
       (file-truename filename)
     filename))
 
+(defun helm-etags+-get-symbal-at-point()
+  (let(symbol )
+    (cond ( (equal major-mode 'verilog-mode)
+            (with-syntax-table (copy-syntax-table (syntax-table))
+              (modify-syntax-entry ?`  ".");treat . as punctuation character
+              (setq symbol (thing-at-point 'symbol))))
+          (t
+           (setq symbol (thing-at-point 'symbol))))
+    symbol))
+
 (defun helm-etags+-find-tags-file ()
   "recursively searches each parent directory for a file named 'TAGS' and returns the
 path to that file or nil if a tags file is not found. Returns nil if the buffer is
@@ -507,7 +517,7 @@ needn't search tag file again."
     (helm  :sources 'helm-c-source-etags+-select
            ;; :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
            ;; Initialize input with current symbol
-           :input (or pattern (concat "\\_<" (thing-at-point 'symbol) "\\_>"))
+           :input (or pattern (concat "\\_<" (helm-etags+-get-symbal-at-point) "\\_>"))
            :prompt "Find Tag(require 3 char): ")))
 
 ;; if you want call helm-etags in your special function
