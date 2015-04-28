@@ -116,7 +116,7 @@ then `ctags-update' will be called"
   (list
    "--fields=+iaSt"
    "--extra=+q"
-   "−−c++−kinds=+p"
+   ;; "−−c++−kinds=+p"
    "--exclude='*.elc'"
    "--exclude='*.class'"
    "--exclude='.git'"
