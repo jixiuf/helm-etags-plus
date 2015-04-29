@@ -2,12 +2,11 @@
 
 ;; Created: 2011-02-23
 ;; Last Updated: 纪秀峰 2014-07-27 16:56:24
-;; Version: 0.2.1
+;; Version: 0.2.2
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
-;; Copyright (C) 2011~2012, 纪秀峰(Joseph), all rights reserved.
+;; Copyright (C) 2015, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
 ;; Keywords: helm, etags
-;; Compatibility: (Test on GNU Emacs 23.2.1)
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -115,23 +114,6 @@
 ;;    Go Forward.
 ;;  `helm-etags+-history'
 ;;    show all tag historys using `helm'
-;;
-;;; Customizable Options:
-;;
-;; Below are customizable option list:
-;;
-;;  `helm-etags+-use-short-file-name'
-;;    t means use filename,
-;;    default = nil
-;;  `helm-etags+-filename-location'
-;;    display src filename after src file name parent dir or not.
-;;    default = (quote filename-after-dir)
-;;  `helm-etags+-highlight-after-jump'
-;;    *If non-nil, temporarily highlight the tag
-;;    default = t
-;;  `helm-etags+-highlight-delay'
-;;    *How long to highlight the tag.
-;;    default = 0.2
 
 ;;; Code:
 
@@ -154,23 +136,22 @@
   :prefix "helm-etags+-"
   :group 'etags)
 
-(defcustom helm-etags+-use-short-file-name nil
-  "t means use filename,
-  'absolute means use absolute filename
+(defcustom helm-etags+-use-absolute-path nil
+  "t means means use absolute filename
   nil means use relative filename as the display,
  search '(DISPLAY . REAL)' in helm.el for more info."
   :type '(choice (const nil) (const t) (const absolute))
+  :group 'helm-etags+)
+
+(defcustom helm-etags+-split-char ?.
+  "a char between tag and filepath"
+  :type 'string
   :group 'helm-etags+)
 
 (defcustom helm-etags+-follow-symlink-p t
   "see issue #9,maybe you should set `find-file-visit-truename' to nil,
    if you set this to nil"
   :type 'boolean
-  :group 'helm-etags+)
-
-(defcustom helm-etags+-filename-location 'filename-after-dir
-  "display src filename after src file name parent dir or not."
-  :type '(choice (const filename-before-dir) (const filename-after-dir))
   :group 'helm-etags+)
 
 (defcustom helm-etags+-highlight-after-jump t
@@ -190,6 +171,12 @@
   '((t (:foreground "white" :background "cadetblue4" :bold t)))
   "Font Lock mode face used to highlight tags.
   (borrowed from etags-select.el)"
+  :group 'helm-etags+)
+
+(defface helm-etags+-file-face
+  '((t (:foreground "Lightgoldenrod4"
+                    :underline t)))
+  "Face used to highlight etags filenames."
   :group 'helm-etags+)
 
 (defun helm-etags+-highlight (beg end)
@@ -388,37 +375,28 @@ needn't search tag file again."
       candidates)))
 
 (defun helm-etags+-build-calidate(tag-table-buffer tag-line src-file-path tag-info full-tagname)
-  (let ((display)(real (list  src-file-path tag-info full-tagname))
-        (src-location-display (file-name-nondirectory src-file-path)))
+  (let* ((display)
+         (real (list  src-file-path tag-info full-tagname))
+         (src-file-name (file-name-nondirectory src-file-path))
+         (src-file-parent (file-name-directory src-file-path))
+         (prefix src-file-name)
+         (suffix src-file-parent)
+         tag-table-parent)
     (cond
-     ((equal helm-etags+-use-short-file-name nil)
-      (let ((tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
-            (src-file-parent (file-name-directory src-file-path)))
-        (when (string-match  (regexp-quote tag-table-parent) src-file-path)
-          (if (equal 'filename-after-dir helm-etags+-filename-location)
-              (setq src-location-display (substring src-file-path (length  tag-table-parent)))
-            (setq src-location-display (concat src-location-display "\\"  (substring src-file-parent (length  tag-table-parent))))
-            ))))
-     ((equal helm-etags+-use-short-file-name t)
-      (setq src-location-display (file-name-nondirectory src-file-path)))
-     ((equal helm-etags+-use-short-file-name 'absolute)
-      (let ((src-file-parent (file-name-directory src-file-path)))
-        (if (equal 'filename-after-dir helm-etags+-filename-location)
-            (setq src-location-display src-file-path)
-          (setq src-location-display (concat src-location-display "\\"
-                                             (mapconcat 'identity (reverse (split-string src-file-parent "/")) "/" )))
-          )
-        )
-
-      ))
-    (setq display (concat tag-line
+     ((equal helm-etags+-use-absolute-path nil) ;relative
+      (setq tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
+      (when (string-match  (regexp-quote tag-table-parent) src-file-path)
+        (setq suffix (substring src-file-parent (length  tag-table-parent))))))
+    (setq display (concat (propertize prefix 'face 'helm-etags+-file-face)
+                          ": " tag-line
                           (or (ignore-errors
                                 (make-string (- (frame-width)
-                                                5
+                                                8
                                                 (string-width tag-line)
-                                                (string-width  src-location-display))
-                                             ? )) "")
-                          src-location-display))
+                                                (string-width  suffix)
+                                                (string-width  prefix))
+                                             helm-etags+-split-char)) "")
+                          (propertize suffix 'face 'helm-etags+-file-face)))
     (cons display real)))
 
 (defun helm-etags+-find-tag(candidate)
