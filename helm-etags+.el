@@ -382,39 +382,44 @@ needn't search tag file again."
             (end-of-line)
             ;;(setq src-file-name (etags-file-of-tag))
             (setq src-file-name   (helm-etags+-file-truename (etags-file-of-tag)))
-            (let ((display)(real (list  src-file-name tag-info full-tagname))
-                  (src-location-display (file-name-nondirectory src-file-name)))
-              (cond
-               ((equal helm-etags+-use-short-file-name nil)
-                (let ((tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
-                      (src-file-parent (file-name-directory src-file-name)))
-                  (when (string-match  (regexp-quote tag-table-parent) src-file-name)
-                    (if (equal 'filename-after-dir helm-etags+-filename-location)
-                        (setq src-location-display (substring src-file-name (length  tag-table-parent)))
-                      (setq src-location-display (concat src-location-display "\\"  (substring src-file-parent (length  tag-table-parent))))
-                      ))))
-               ((equal helm-etags+-use-short-file-name t)
-                (setq src-location-display (file-name-nondirectory src-file-name)))
-               ((equal helm-etags+-use-short-file-name 'absolute)
-                (let ((src-file-parent (file-name-directory src-file-name)))
-                  (if (equal 'filename-after-dir helm-etags+-filename-location)
-                      (setq src-location-display src-file-name)
-                    (setq src-location-display (concat src-location-display "\\"
-                                                       (mapconcat 'identity (reverse (split-string src-file-parent "/")) "/" )))
-                  )
-                  )
 
-                ))
-              (setq display (concat tag-line
-                                    (or (ignore-errors
-                                          (make-string (- (window-width)
-                                                          (string-width tag-line)
-                                                          (string-width  src-location-display))
-                                                       ? )) "")
-                                    src-location-display))
-              (add-to-list 'candidates (cons display real)))))
+            (add-to-list 'candidates (helm-etags+-build-calidate tag-table-buffer tag-line src-file-name tag-info full-tagname))))
         (modify-syntax-entry ?_ "_"))
       candidates)))
+
+(defun helm-etags+-build-calidate(tag-table-buffer tag-line src-file-name tag-info full-tagname)
+  (let ((display)(real (list  src-file-name tag-info full-tagname))
+        (src-location-display (file-name-nondirectory src-file-name)))
+    (cond
+     ((equal helm-etags+-use-short-file-name nil)
+      (let ((tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
+            (src-file-parent (file-name-directory src-file-name)))
+        (when (string-match  (regexp-quote tag-table-parent) src-file-name)
+          (if (equal 'filename-after-dir helm-etags+-filename-location)
+              (setq src-location-display (substring src-file-name (length  tag-table-parent)))
+            (setq src-location-display (concat src-location-display "\\"  (substring src-file-parent (length  tag-table-parent))))
+            ))))
+     ((equal helm-etags+-use-short-file-name t)
+      (setq src-location-display (file-name-nondirectory src-file-name)))
+     ((equal helm-etags+-use-short-file-name 'absolute)
+      (let ((src-file-parent (file-name-directory src-file-name)))
+        (if (equal 'filename-after-dir helm-etags+-filename-location)
+            (setq src-location-display src-file-name)
+          (setq src-location-display (concat src-location-display "\\"
+                                             (mapconcat 'identity (reverse (split-string src-file-parent "/")) "/" )))
+          )
+        )
+
+      ))
+    (setq display (concat tag-line
+                          (or (ignore-errors
+                                (make-string (- (frame-width)
+                                                5
+                                                (string-width tag-line)
+                                                (string-width  src-location-display))
+                                             ? )) "")
+                          src-location-display))
+    (cons display real)))
 
 (defun helm-etags+-find-tag(candidate)
   "Find tag that match CANDIDATE from `tags-table-list'.
