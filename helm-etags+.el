@@ -349,7 +349,7 @@ needn't search tag file again."
   "find tagname in tag-table-buffer. "
   (catch 'failed
     (let ((case-fold-search (helm-etags+-case-fold-search))
-          tag-info tag-line src-file-name full-tagname
+          tag-info tag-line src-file-path full-tagname
           tag-regex
           tagname-regexp-quoted
           candidates)
@@ -380,31 +380,31 @@ needn't search tag file again."
             (setq tag-line (replace-regexp-in-string  "/\\*.*\\*/" "" tag-line))
             (setq tag-line (replace-regexp-in-string  "\t" (make-string tab-width ? ) tag-line))
             (end-of-line)
-            ;;(setq src-file-name (etags-file-of-tag))
-            (setq src-file-name   (helm-etags+-file-truename (etags-file-of-tag)))
+            ;;(setq src-file-path (etags-file-of-tag))
+            (setq src-file-path   (helm-etags+-file-truename (etags-file-of-tag)))
 
-            (add-to-list 'candidates (helm-etags+-build-calidate tag-table-buffer tag-line src-file-name tag-info full-tagname))))
+            (add-to-list 'candidates (helm-etags+-build-calidate tag-table-buffer tag-line src-file-path tag-info full-tagname))))
         (modify-syntax-entry ?_ "_"))
       candidates)))
 
-(defun helm-etags+-build-calidate(tag-table-buffer tag-line src-file-name tag-info full-tagname)
-  (let ((display)(real (list  src-file-name tag-info full-tagname))
-        (src-location-display (file-name-nondirectory src-file-name)))
+(defun helm-etags+-build-calidate(tag-table-buffer tag-line src-file-path tag-info full-tagname)
+  (let ((display)(real (list  src-file-path tag-info full-tagname))
+        (src-location-display (file-name-nondirectory src-file-path)))
     (cond
      ((equal helm-etags+-use-short-file-name nil)
       (let ((tag-table-parent (helm-etags+-file-truename (file-name-directory (buffer-file-name tag-table-buffer))))
-            (src-file-parent (file-name-directory src-file-name)))
-        (when (string-match  (regexp-quote tag-table-parent) src-file-name)
+            (src-file-parent (file-name-directory src-file-path)))
+        (when (string-match  (regexp-quote tag-table-parent) src-file-path)
           (if (equal 'filename-after-dir helm-etags+-filename-location)
-              (setq src-location-display (substring src-file-name (length  tag-table-parent)))
+              (setq src-location-display (substring src-file-path (length  tag-table-parent)))
             (setq src-location-display (concat src-location-display "\\"  (substring src-file-parent (length  tag-table-parent))))
             ))))
      ((equal helm-etags+-use-short-file-name t)
-      (setq src-location-display (file-name-nondirectory src-file-name)))
+      (setq src-location-display (file-name-nondirectory src-file-path)))
      ((equal helm-etags+-use-short-file-name 'absolute)
-      (let ((src-file-parent (file-name-directory src-file-name)))
+      (let ((src-file-parent (file-name-directory src-file-path)))
         (if (equal 'filename-after-dir helm-etags+-filename-location)
-            (setq src-location-display src-file-name)
+            (setq src-location-display src-file-path)
           (setq src-location-display (concat src-location-display "\\"
                                              (mapconcat 'identity (reverse (split-string src-file-parent "/")) "/" )))
           )
@@ -424,14 +424,14 @@ needn't search tag file again."
 (defun helm-etags+-find-tag(candidate)
   "Find tag that match CANDIDATE from `tags-table-list'.
    And switch buffer and jump tag position.."
-  (let ((src-file-name (car candidate))
+  (let ((src-file-path (car candidate))
         (tag-info (nth 1 candidate))
         (tagname (nth 2 candidate))
         src-file-buf)
-    (when (file-exists-p src-file-name)
+    (when (file-exists-p src-file-path)
       ;; Jump to tag position when
       ;; tag file is valid.
-      (setq src-file-buf (find-file src-file-name))
+      (setq src-file-buf (find-file src-file-path))
       (etags-goto-tag-location  tag-info)
 
       (beginning-of-line)
