@@ -390,7 +390,7 @@ needn't search tag file again."
     (setq display (concat (propertize prefix 'face 'helm-etags+-file-face)
                           ": " tag-line
                           (or (ignore-errors
-                                (make-string (- (frame-width)
+                                (make-string (- (window-text-width)
                                                 8
                                                 (string-width tag-line)
                                                 (string-width  suffix)
