@@ -125,7 +125,7 @@
 (require 'helm)
 ;; (require 'helm-config nil t)        ;optional
 (eval-when-compile
-   (require 'helm-match-plugin nil t)
+   (require 'helm-multi-match nil t)
   )
 ;;  ;optional
 
@@ -218,10 +218,10 @@ will set this variable.")
 
 (defvar helm-etags+-prev-matched-pattern nil
   "work with `helm-etags+-candidates-cache'.
-  the value is (car (helm-mp-split-pattern helm-pattern))
+  the value is (car (helm-mm-split-pattern helm-pattern))
 :the first part of `helm-pattern', the matched
  candidates is saved in `helm-etags+-candidates-cache'. when current
-'(car (helm-mp-split-pattern helm-pattern))' is equals to this value
+'(car (helm-mm-split-pattern helm-pattern))' is equals to this value
 then the cached candidates can be reused ,needn't find from the tag file.")
 
 (defvar helm-etags+-candidates-cache nil
@@ -309,11 +309,11 @@ will search `toString' in all tag files. and the found
 'toString' is stored in `helm-etags+-prev-matched-pattern'
 so when the `helm-pattern' become to 'toString System public'
 needn't search tag file again."
-  (let ((pattern (car (helm-mp-split-pattern helm-etags+-untransformed-helm-pattern))));;default use whole helm-pattern to search in tag files
+  (let ((pattern (car (helm-mm-split-pattern helm-etags+-untransformed-helm-pattern))));;default use whole helm-pattern to search in tag files
     ;; first collect candidates using first part of helm-pattern
     ;; (when (featurep 'helm-match-plugin)
-    ;;   ;;for example  (helm-mp-split-pattern "boo far") -->("boo" "far")
-    ;;   (setq pattern  (car (helm-mp-split-pattern helm-etags+-untransformed-helm-pattern))))
+    ;;   ;;for example  (helm-mm-split-pattern "boo far") -->("boo" "far")
+    ;;   (setq pattern  (car (helm-mm-split-pattern helm-etags+-untransformed-helm-pattern))))
     (cond
      ((or (string-equal "" pattern) (string-equal "\\_<\\_>" pattern))
        nil)
