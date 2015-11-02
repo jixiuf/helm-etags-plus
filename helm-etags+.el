@@ -93,7 +93,8 @@
 ;;  if you do not want use bm.el for navigating history
 ;;  you could
 ;; (autoload 'bm-bookmark-add "bm" "add bookmark")
-;; (add-hook 'helm-etags+-before-jump-hook 'bm-bookmark-add)
+;;      (add-hook 'helm-etags+-before-jump-hook 'bm-bookmark-add)
+;; or   (add-hook 'helm-etags+-before-jump-hook '(lambda()(bm-bookmark-add nil nil t)))
 ;; (setq bm-in-lifo-order t)
 ;;  then use bm-previous bm-next
 
@@ -202,6 +203,8 @@
    source `helm-c-source-etags+-select'")
 (defvar helm-etags+-before-jump-hook nil
   "hooks run before jump to tag location")
+(defvar helm-etags+-after-jump-hook nil
+  "hooks run afterjump to tag location")
 
 ;;; Variables
 (defvar  helm-etags+-markers (make-ring 8))
@@ -490,7 +493,8 @@ needn't search tag file again."
     (let ((index (ring-member helm-etags+-markers (point-marker))))
       (when index (ring-remove helm-etags+-markers index)))
     (ring-insert helm-etags+-markers (point-marker))
-    (setq helm-etags+-cur-mark (point-marker))))
+    (setq helm-etags+-cur-mark (point-marker)))
+  (run-hooks 'helm-etags+-after-jump-hook))
 
 ;; if you want call helm-etags in your special function
 ;; you can do it like this
