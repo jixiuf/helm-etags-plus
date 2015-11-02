@@ -90,6 +90,14 @@
 ;; ;;go forward directly
 ;; (global-set-key "\M-/" 'helm-etags+-history-action-go-forward)
 ;;
+;;  if you do not want use bm.el for navigating history
+;;  you could
+;; (autoload 'bm-bookmark-add "bm" "add bookmark")
+;; (add-hook 'helm-etags+-before-jump-hook 'bm-bookmark-add)
+;; (setq bm-in-lifo-order t)
+;;  then use bm-previous bm-next
+
+;;
 ;; and how to work with etags-table.el
 ;; (require 'etags-table)
 ;; (setq etags-table-alist
@@ -192,6 +200,8 @@
 (defvar helm-etags+-select-hook nil
   "hooks run before `helm' funcion with
    source `helm-c-source-etags+-select'")
+(defvar helm-etags+-before-jump-hook nil
+  "hooks run before jump to tag location")
 
 ;;; Variables
 (defvar  helm-etags+-markers (make-ring 8))
@@ -471,6 +481,7 @@ needn't search tag file again."
       (ring-insert helm-etags+-markers (point-marker))
       ))
 
+  (run-hooks 'helm-etags+-before-jump-hook)
   (helm-etags+-find-tag candidate);;core func.
 
   (when (or  (ring-empty-p helm-etags+-markers)
