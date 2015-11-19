@@ -133,6 +133,7 @@
 ;; (require 'custom)
 (require 'etags)
 (require 'helm)
+(require 'helm-utils)
 ;; (require 'helm-config nil t)        ;optional
 (eval-when-compile
    (require 'helm-multi-match nil t)
