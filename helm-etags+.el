@@ -7,6 +7,7 @@
 ;; Copyright (C) 2015, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
 ;; Keywords: helm, etags
+;; Package-Requires: ((helm "1.7.8"))
 ;;
 ;; Features that might be required by this library:
 ;;
