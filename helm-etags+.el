@@ -689,4 +689,4 @@ needn't search tag file again."
           :preselect  "\t")))           ;if an candidate ,then this line is preselected
 
 (provide 'helm-etags+)
-;;;helm-etags+.el ends here.
+;;; helm-etags+.el ends here.
