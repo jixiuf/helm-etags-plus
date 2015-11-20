@@ -7,6 +7,7 @@
 ;; Copyright (C) 2015, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
 ;; Keywords: helm, etags
+;; Package-Requires: ((helm "1.7.8"))
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -132,6 +133,7 @@
 ;; (require 'custom)
 (require 'etags)
 (require 'helm)
+(require 'helm-utils)
 ;; (require 'helm-config nil t)        ;optional
 (eval-when-compile
    (require 'helm-multi-match nil t)
@@ -689,4 +691,4 @@ needn't search tag file again."
           :preselect  "\t")))           ;if an candidate ,then this line is preselected
 
 (provide 'helm-etags+)
-;;;helm-etags+.el ends here.
+;;; helm-etags+.el ends here.
