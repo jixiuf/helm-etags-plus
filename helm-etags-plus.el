@@ -2,7 +2,7 @@
 
 ;; Created: 2011-02-23
 ;; Last Updated: 纪秀峰 2014-07-27 16:56:24
-;; Version: 1.0
+;; Version: 1.1
 ;; Author: 纪秀峰(Joseph) <jixiuf@gmail.com>
 ;; Copyright (C) 2015, 纪秀峰(Joseph), all rights reserved.
 ;; URL       :https://github.com/jixiuf/helm-etags-plus
@@ -87,9 +87,9 @@
 ;; ;;list all visited tags
 ;; (global-set-key "\M-*" 'helm-etags-plus-history)
 ;; ;;go back directly
-;; (global-set-key "\M-," 'helm-etags-plus-history-action-go-back)
+;; (global-set-key "\M-," 'helm-etags-plus-history-go-back)
 ;; ;;go forward directly
-;; (global-set-key "\M-/" 'helm-etags-plus-history-action-go-forward)
+;; (global-set-key "\M-/" 'helm-etags-plus-history-go-forward)
 ;;
 ;;  if you do not want use bm.el for navigating history
 ;;  you could
