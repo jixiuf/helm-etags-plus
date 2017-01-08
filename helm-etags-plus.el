@@ -148,33 +148,30 @@
   :group 'etags)
 
 (defcustom helm-etags-plus-use-absolute-path nil
-  "t means means use absolute filename
-  nil means use relative filename as the display,
+  "Not nil means means use absolute filename.
+nil means use relative filename as the display,
  search '(DISPLAY . REAL)' in helm.el for more info."
   :type '(choice (const nil) (const t) (const absolute))
   :group 'helm-etags-plus)
 
 (defcustom helm-etags-plus-split-char ?.
-  "a char between tag and filepath"
+  "A char between tag and filepath."
   :type 'string
   :group 'helm-etags-plus)
 
 (defcustom helm-etags-plus-follow-symlink-p t
-  "see issue #9,maybe you should set `find-file-visit-truename' to nil,
-   if you set this to nil"
+  "See issue #9,maybe you should set `find-file-visit-truename' to nil.
+if you set this to nil"
   :type 'boolean
   :group 'helm-etags-plus)
 
 (defcustom helm-etags-plus-highlight-after-jump t
-  "*If non-nil, temporarily highlight the tag
-  after you jump to it.
-  (borrowed from etags-select.el)"
+  "*If non-nil, temporarily highlight the tag after you jump to it."
   :group 'helm-etags-plus
   :type 'boolean)
 
 (defcustom helm-etags-plus-highlight-delay 0.2
-  "*How long to highlight the tag.
-  (borrowed from etags-select.el)"
+  "*How long to highlight the tag."
   :group 'helm-etags-plus
   :type 'number)
 
@@ -192,7 +189,9 @@
 
 (defun helm-etags-plus-highlight (beg end)
   "Highlight a region temporarily.
-   (borrowed from etags-select.el)"
+\(borrowed from etags-select.el)
+Argument BEG begin position.
+Argument END end position."
   (let ((ov (make-overlay beg end)))
       (overlay-put ov 'face 'helm-etags-plus-highlight-face)
       (sit-for helm-etags-plus-highlight-delay)
@@ -201,19 +200,18 @@
 ;;; Hooks
 
 (defvar helm-etags-plus-select-hook nil
-  "hooks run before `helm' funcion with
-   source `helm-c-source-etags-plus-select'")
+  "Hooks run before `helm' funcion with source `helm-etags-plus-source'.")
 (defvar helm-etags-plus-before-jump-hook nil
-  "hooks run before jump to tag location")
+  "Hooks run before jump to tag location.")
 (defvar helm-etags-plus-after-jump-hook nil
-  "hooks run afterjump to tag location")
+  "Hooks run afterjump to tag location.")
 
 ;;; Variables
 (defvar  helm-etags-plus-markers (make-ring 8))
 
 (defvar helm-etags-plus-cur-mark nil
-  "a marker in `helm-etags-plus-markers', going back and going
-forward are related to this variable.")
+  "A marker in `helm-etags-plus-markers'.
+going back and going forward are related to this variable.")
 
 ;; (defvar helm-etags-plus-history-tmp-marker nil
 ;;   "this variable will remember current position
@@ -221,26 +219,24 @@ forward are related to this variable.")
 ;;   after you press `RET' execute `helm-etags-plus-history-action'
 ;;  it will be push into `helm-etags-plus-markers'")
 (defvar helm-etags-plus-tag-table-buffers nil
-  "each time `helm-etags-plus-select' is executed ,it
-will set this variable.")
-(defvar helm-input-idle-delay-4-helm-etags-plus 0.8
-  "see `helm-idle-delay'. I will set it locally
-   in `helm-etags-plus-select'")
+  "Each time `helm-etags-plus-select' is executed ,it will set this variable.")
 
-(defvar prev-opened-buf-in-persist-action nil
-  "record it to kill-it in persistent-action,in order to
-   not open too much buffer.")
+(defvar helm-etags-plus--input-idle-delay 0.8
+"See `helm-idle-delay',I will set it locally in `helm-etags-plus-select'.")
+
+(defvar helm-etags-plus--prev-opened-buf-in-persist-action nil
+  "Record it to kill-it in persistent-action,in order to not open too much buffer.")
 
 (defvar helm-etags-plus-prev-matched-pattern nil
-  "work with `helm-etags-plus-candidates-cache'.
-  the value is (car (helm-mm-split-pattern helm-pattern))
+  "Work with `helm-etags-plus-candidates-cache'.
+the value is (car (helm-mm-split-pattern helm-pattern))
 :the first part of `helm-pattern', the matched
  candidates is saved in `helm-etags-plus-candidates-cache'. when current
 '(car (helm-mm-split-pattern helm-pattern))' is equals to this value
 then the cached candidates can be reused ,needn't find from the tag file.")
 
 (defvar helm-etags-plus-candidates-cache nil
-  "documents see `helm-etags-plus-prev-matched-pattern'")
+  "Documents see `helm-etags-plus-prev-matched-pattern'.")
 (defvar helm-etags-plus-untransformed-helm-pattern
   "this variable is seted in func of transformed-pattern .and is used when
 getting candidates.")
@@ -270,9 +266,9 @@ getting candidates.")
     symbol))
 
 (defun helm-etags-plus-find-tags-file ()
-  "recursively searches each parent directory for a file named 'TAGS' and returns the
-path to that file or nil if a tags file is not found. Returns nil if the buffer is
-not visiting a file"
+  "Recursively search each parent directory for a file named 'TAGS'.
+and returns the path to that file or nil if a tags file is not found.
+Returns nil if the buffer is not visiting a file"
 (let ((tag-root-dir (locate-dominating-file default-directory "TAGS")))
     (if tag-root-dir
         (expand-file-name "TAGS" tag-root-dir)
@@ -297,7 +293,8 @@ not visiting a file"
       ))buf)
 
 (defun helm-etags-plus-get-tag-table-buffer (tag-file)
-  "Get tag table buffer for a tag file."
+  "Get tag table buffer for a tag file.
+Argument TAG-FILE tag file name."
   (when (file-exists-p tag-file)
     (let ((tag-table-buffer) (current-buf (current-buffer))
           (tags-revert-without-query t)
@@ -348,7 +345,7 @@ needn't search tag file again."
     candidates))
 
 (defun helm-etags-plus-candidates-from-tag-file (tagname tag-table-buffer)
-  "find tagname in tag-table-buffer. "
+  "Find TAGNAME in TAG-TABLE-BUFFER."
   (catch 'failed
     (let ((case-fold-search (helm-etags-plus-case-fold-search))
           tag-info tag-line src-file-path full-tagname
@@ -444,13 +441,13 @@ needn't search tag file again."
 
       (if helm-in-persistent-action ;;prevent from opening too much buffer in persistent action
           (progn
-            (if (and prev-opened-buf-in-persist-action
-                     (not (equal prev-opened-buf-in-persist-action src-file-buf)))
-                (kill-buffer  prev-opened-buf-in-persist-action))
-            (setq prev-opened-buf-in-persist-action src-file-buf))
-        (setq prev-opened-buf-in-persist-action nil)))))
+            (if (and helm-etags-plus--prev-opened-buf-in-persist-action
+                     (not (equal helm-etags-plus--prev-opened-buf-in-persist-action src-file-buf)))
+                (kill-buffer  helm-etags-plus--prev-opened-buf-in-persist-action))
+            (setq helm-etags-plus--prev-opened-buf-in-persist-action src-file-buf))
+        (setq helm-etags-plus--prev-opened-buf-in-persist-action nil)))))
 
-(defun pos-in-same-symbol-p(marker1 marker2)
+(defun helm-etags-plus--pos-in-same-symbol-p(marker1 marker2)
   "check whether `marker1' and `marker2' are at the same place or not"
   (cond
    ((and (helm-etags-plus-is-marker-available marker1)
@@ -475,11 +472,13 @@ needn't search tag file again."
            (equal bounds1 bounds2))))
    (t nil)))
 
-(defun helm-c-etags-plus-goto-location (candidate)
+(defun helm-etags-plus-goto-location (candidate)
+  "Goto location.
+Argument CANDIDATE the candidate."
   (unless helm-in-persistent-action
     ;;you can use `helm-etags-plus-history' go back
     (when (or  (ring-empty-p helm-etags-plus-markers)
-               (not (pos-in-same-symbol-p  (point-marker)
+               (not (helm-etags-plus--pos-in-same-symbol-p  (point-marker)
                                            (ring-ref helm-etags-plus-markers 0))))
       (let ((index (ring-member helm-etags-plus-markers (point-marker))))
         (when index (ring-remove helm-etags-plus-markers index)))
@@ -490,7 +489,7 @@ needn't search tag file again."
   (helm-etags-plus-find-tag candidate);;core func.
 
   (when (or  (ring-empty-p helm-etags-plus-markers)
-             (not (pos-in-same-symbol-p  (point-marker)
+             (not (helm-etags-plus--pos-in-same-symbol-p  (point-marker)
                                          (ring-ref helm-etags-plus-markers 0))))
     (let ((index (ring-member helm-etags-plus-markers (point-marker))))
       (when index (ring-remove helm-etags-plus-markers index)))
@@ -507,13 +506,13 @@ needn't search tag file again."
   "Find Tag using `etags' and `helm' `pattern' is a regexp."
   (interactive "P")
   (let ((helm-execute-action-at-once-if-one t)
-        (helm-quit-if-no-candidate  (lambda()(error "no candidates")))
+        (helm-quit-if-no-candidate  (lambda()(error "No candidates")))
         (helm-maybe-use-default-as-input nil)
         (helm-candidate-number-limit nil)
-        (helm-input-idle-delay helm-input-idle-delay-4-helm-etags-plus))
+        (helm-input-idle-delay helm-etags-plus--input-idle-delay))
     (when (and pattern (string-equal "" pattern) ) (setq helm-quit-if-no-candidate nil) )
     (run-hooks 'helm-etags-plus-select-hook)
-    (helm  :sources 'helm-c-source-etags-plus-select
+    (helm  :sources 'helm-etags-plus-source
            ;; :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
            ;; Initialize input with current symbol
            :input (or pattern (concat "\\_<" (helm-etags-plus-get-symbal-at-point) "\\_>"))
@@ -533,7 +532,7 @@ needn't search tag file again."
     (helm-etags-plus-select-internal "")) ;waiting for you input pattern
    (t (helm-etags-plus-select-internal))))  ;use thing-at-point as symbol
 
-(defvar helm-c-source-etags-plus-select
+(defvar helm-etags-plus-source
   '((name . "Etags+")
     (init . helm-etags-plus-get-avail-tag-bufs)
     (candidates . helm-etags-plus-get-candidates-cache)
@@ -542,8 +541,8 @@ needn't search tag file again."
                            (setq helm-etags-plus-untransformed-helm-pattern helm-pattern)
                            (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  helm-pattern))))
     (requires-pattern  . 3);;need at least 3 char
-    ;; (delayed);; (setq helm-input-idle-delay-4-helm-etags-plus 1)
-    (action ("Goto the location" . helm-c-etags-plus-goto-location))))
+    ;; (delayed);; (setq helm-etags-plus--input-idle-delay 1)
+    (action ("Goto the location" . helm-etags-plus-goto-location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -652,7 +651,8 @@ needn't search tag file again."
           (setq helm-etags-plus-cur-mark prev-marker)))))
 
 (defun helm-etags-plus-history-go-internel (candidate-marker)
-  "Go to the location depend on candidate."
+  "Go to the location depend on candidate.
+Argument CANDIDATE-MARKER candidate marker."
   (let ((buf (marker-buffer candidate-marker))
         (pos (marker-position candidate-marker)))
     (when buf
@@ -670,7 +670,7 @@ needn't search tag file again."
   (when  helm-in-persistent-action
     (helm-highlight-current-line)))
 
-(defvar helm-source-etags-plus-history
+(defvar helm-etags-plus-history-source
   '((name . "Etags+ History: ")
     (header-name .( (lambda (name) (concat name "`RET': Go ,`C-z' Preview. `C-e': Clear all history."))))
     (init .  helm-etags-plus-history-init)
@@ -686,9 +686,13 @@ needn't search tag file again."
   (let ((helm-execute-action-at-once-if-one t)
         (helm-quit-if-no-candidate
          (lambda () (message "No history record in `helm-etags-plus-markers'"))))
-    (helm :sources    '(helm-source-etags-plus-history)
+    (helm :sources    '(helm-etags-plus-history-source)
           :input      ""
           :preselect  "\t")))           ;if an candidate ,then this line is preselected
 
 (provide 'helm-etags-plus)
 ;;; helm-etags-plus.el ends here.
+
+(provide 'helm-etags-plus)
+
+;;; helm-etags-plus.el ends here
