@@ -13,7 +13,7 @@ it support multiple tag files.
  M-. default use symbol under point as tagname
  C-uM-. use pattern you typed as tagname
 
-# Go back and forward
+## Go back and forward
     ;;list all visited tags
     (global-set-key "\M-*" 'helm-etags-plus-history)
     ;;go back directly
@@ -33,7 +33,7 @@ it support multiple tag files.
 
  then use bm-previous bm-next 
 
-#   Integrating with  etags-table.el
+##   Integrating with  etags-table.el
 
     (require 'etags-table)
     (setq etags-table-alist
@@ -48,4 +48,5 @@ it support multiple tag files.
      
 
 
-ctags-update.el  moved to https://github.com/jixiuf/ctags-update
+# ctags-update.el 
+   moved to https://github.com/jixiuf/ctags-update
