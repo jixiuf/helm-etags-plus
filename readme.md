@@ -26,9 +26,9 @@ it support multiple tag files.
         (setq bm-in-lifo-order t)
 
         (autoload 'bm-bookmark-add "bm" "add bookmark")
+        
         (add-hook 'helm-etags-plus-before-jump-hook 'bm-bookmark-add)
- or
-
+        ;;or
         (add-hook 'helm-etags-plus-before-jump-hook '(lambda()(bm-bookmark-add nil nil t)))
 
  then use bm-previous bm-next 
