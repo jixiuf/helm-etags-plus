@@ -30,7 +30,8 @@ it support multiple tag files.
     ;;go forward directly
     (global-set-key "\M-/" 'helm-etags-plus-history-go-forward)
   
- if you want to use bm.el for navigating history,you could
+  
+ if you want to use [bm.el](https://github.com/joodland/bm) for navigating history,you could
 
         (setq bm-in-lifo-order t)
 
@@ -39,10 +40,11 @@ it support multiple tag files.
         (add-hook 'helm-etags-plus-before-jump-hook 'bm-bookmark-add)
         ;;or
         (add-hook 'helm-etags-plus-before-jump-hook '(lambda()(bm-bookmark-add nil nil t)))
+        ;Auto remove bookmark after jump to it by bm-next or bm-previous
 
- then use bm-previous bm-next 
+ then use bm-previous bm-next to jump 
 
-##   Integrating with  etags-table.el
+##   Integration with etags-table.el
 
     (require 'etags-table)
     (setq etags-table-alist
