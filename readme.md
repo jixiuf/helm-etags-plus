@@ -1,5 +1,14 @@
 #  Etags helm.el interface
+[![MELPA](http://melpa.org/packages/helm-etags-plus-badge.svg)](http://melpa.org/#/helm-etags-plus)
 
+
+The easiest way to get started is to install the package via [MELPA][melpa]:
+
+ [melpa]: http://melpa.org/
+
+```elisp
+(package-install 'helm-etags-plus)
+```
 it support multiple tag files.
 
     (setq tags-table-list '("/path/of/TAGS1"    "/path/of/TAG2"))
@@ -21,7 +30,7 @@ it support multiple tag files.
     ;;go forward directly
     (global-set-key "\M-/" 'helm-etags-plus-history-go-forward)
   
- if you do not want to use bm.el for navigating history,you could
+ if you want to use bm.el for navigating history,you could
 
         (setq bm-in-lifo-order t)
 
