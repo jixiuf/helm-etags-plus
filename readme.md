@@ -1,5 +1,14 @@
-Etags helm.el interface
+#  Etags helm.el interface
+[![MELPA](http://melpa.org/packages/helm-etags-plus-badge.svg)](http://melpa.org/#/helm-etags-plus)
 
+
+The easiest way to get started is to install the package via [MELPA][melpa]:
+
+ [melpa]: http://melpa.org/
+
+```elisp
+(package-install 'helm-etags-plus)
+```
 it support multiple tag files.
 
     (setq tags-table-list '("/path/of/TAGS1"    "/path/of/TAG2"))
@@ -13,6 +22,7 @@ it support multiple tag files.
  M-. default use symbol under point as tagname
  C-uM-. use pattern you typed as tagname
 
+## Go back and forward
     ;;list all visited tags
     (global-set-key "\M-*" 'helm-etags-plus-history)
     ;;go back directly
@@ -20,19 +30,21 @@ it support multiple tag files.
     ;;go forward directly
     (global-set-key "\M-/" 'helm-etags-plus-history-go-forward)
   
- if you do not want use bm.el for navigating history,you could
+  
+ if you want to use [bm.el](https://github.com/joodland/bm) for navigating history,you could
 
         (setq bm-in-lifo-order t)
 
         (autoload 'bm-bookmark-add "bm" "add bookmark")
+        
         (add-hook 'helm-etags-plus-before-jump-hook 'bm-bookmark-add)
- or
-
+        ;;or
         (add-hook 'helm-etags-plus-before-jump-hook '(lambda()(bm-bookmark-add nil nil t)))
+        ;Auto remove bookmark after jump to it by bm-next or bm-previous
 
- then use bm-previous bm-next
+ then use bm-previous bm-next to jump 
 
-   and how to work with etags-table.el
+##   Integration with etags-table.el
 
     (require 'etags-table)
     (setq etags-table-alist
@@ -47,4 +59,5 @@ it support multiple tag files.
      
 
 
-ctags-update.el  moved to https://github.com/jixiuf/ctags-update
+# ctags-update.el 
+   moved to https://github.com/jixiuf/ctags-update
