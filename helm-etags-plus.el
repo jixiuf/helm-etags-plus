@@ -165,6 +165,11 @@ if you set this to nil"
   :type 'boolean
   :group 'helm-etags-plus)
 
+(defcustom helm-etags-plus-min-pattern-length 3
+  "Minimum length of pattern to search for."
+  :group 'helm-etags-plus
+  :type 'integer)
+
 (defcustom helm-etags-plus-highlight-after-jump t
   "*If non-nil, temporarily highlight the tag after you jump to it."
   :group 'helm-etags-plus
@@ -524,7 +529,7 @@ Argument CANDIDATE the candidate."
            ;; :default (concat "\\_<" (thing-at-point 'symbol) "\\_>")
            ;; Initialize input with current symbol
            :input (or pattern (concat "\\_<" (helm-etags-plus-get-symbal-at-point) "\\_>"))
-           :prompt "Find Tag(require 3 char): ")))
+           :prompt (format "Find Tag (at least %d chars): " helm-etags-plus-min-pattern-length))))
 
 ;; if you want call helm-etags in your special function
 ;; you can do it like this
@@ -548,7 +553,7 @@ Argument CANDIDATE the candidate."
     (pattern-transformer (lambda (helm-pattern)
                            (setq helm-etags-plus-untransformed-helm-pattern helm-pattern)
                            (regexp-quote (replace-regexp-in-string "\\\\_<\\|\\\\_>" ""  helm-pattern))))
-    (requires-pattern  . 3);;need at least 3 char
+    (requires-pattern . helm-etags-plus-min-pattern-length) ;need at least N chars
     ;; (delayed);; (setq helm-etags-plus--input-idle-delay 1)
     (action ("Goto the location" . helm-etags-plus-goto-location))))
 
