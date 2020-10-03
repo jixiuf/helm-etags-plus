@@ -160,8 +160,8 @@ nil means use relative filename as the display,
   :group 'helm-etags-plus)
 
 (defcustom helm-etags-plus-follow-symlink-p t
-  "See issue #9,maybe you should set `find-file-visit-truename' to nil.
-if you set this to nil"
+  "You might want to set `find-file-visit-truename' to nil if you
+set this to nil."
   :type 'boolean
   :group 'helm-etags-plus)
 
