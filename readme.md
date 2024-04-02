@@ -1,3 +1,5 @@
+> [!NOTE]
+> I no longer use Helm, and the code in this repository hasn't been changed for several years.
 #  Etags helm.el interface
 [![MELPA](http://melpa.org/packages/helm-etags-plus-badge.svg)](http://melpa.org/#/helm-etags-plus)
 
